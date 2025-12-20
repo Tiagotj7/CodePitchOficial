@@ -9,7 +9,6 @@ $stmt = $pdo->prepare("
     SELECT p.*, u.name AS author_name
     FROM projects p
     JOIN users u ON u.id = p.user_id
-    WHERE p.status = 1 AND u.status = 1
     WHERE p.id = ?
 ");
 $stmt->execute(array($id));
@@ -24,6 +23,7 @@ $stmt = $pdo->prepare("
     SELECT c.*, u.name AS author_name
     FROM comments c
     JOIN users u ON u.id = c.user_id
+    WHERE p.status = 1 AND u.status = 1
     WHERE c.project_id = ?
     ORDER BY c.created_at DESC
 ");
