@@ -3,7 +3,7 @@ name: 🚀 Deploy via FTP
 on:
   push:
     branches:
-      - main   # altere para "master" se seu branch principal for master
+      - main   # troque para "master" se o branch principal for master
 
 jobs:
   ftp-deploy:
@@ -20,17 +20,18 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-          # InfinityFree normalmente usa FTPS na porta 21
-          protocol: ftps
+          # PRIMEIRA TENTATIVA: usar FTP simples
+          protocol: ftp
           port: 21
 
-          # Diretório local (raiz do repositório)
+          # Diretório local (raiz do repo)
           local-dir: ./
 
-          # Diretório no servidor (InfinityFree geralmente é /htdocs/)
+          # Diretório no servidor
+          # Se quando você entra com o FileZilla já cai em /htdocs, mude para:
+          # server-dir: ./
           server-dir: /htdocs/
 
-          # Não subir / não apagar estes arquivos/pastas no servidor
           exclude: |
             **/.git*
             **/.git*/**
@@ -41,5 +42,4 @@ jobs:
             **/README.md
             **/LICENSE
 
-          # Opcional: mostra mais detalhes nos logs
           log-level: minimal
