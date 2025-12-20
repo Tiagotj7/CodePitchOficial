@@ -4,31 +4,45 @@ require 'auth.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Busca projeto
-$stmt = $pdo->prepare("
-    SELECT p.*, u.name AS author_name
-    FROM projects p
-    JOIN users u ON u.id = p.user_id
-    WHERE p.id = ?
-");
-$stmt->execute(array($id));
-$project = $stmt->fetch();
-
-if (!$project) {
-    die("Projeto não encontrado.");
+if ($id <= 0) {
+    die('Projeto inválido.');
 }
 
-// Comentários
-$stmt = $pdo->prepare("
-    SELECT c.*, u.name AS author_name
-    FROM comments c
-    JOIN users u ON u.id = c.user_id
-    WHERE p.status = 1 AND u.status = 1
-    WHERE c.project_id = ?
-    ORDER BY c.created_at DESC
-");
-$stmt->execute(array($id));
-$comments = $stmt->fetchAll();
+// ===== BUSCA PROJETO ATIVO =====
+try {
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.name AS author_name
+        FROM projects p
+        JOIN users u ON u.id = p.user_id
+        WHERE p.id = ? AND p.status = 1 AND u.status = 1
+    ");
+    $stmt->execute(array($id));
+    $project = $stmt->fetch();
+} catch (PDOException $e) {
+    // Loga o erro no servidor (error_log)
+    error_log('ERRO PROJECT_VIEW SELECT PROJECT: ' . $e->getMessage());
+    die('Erro ao carregar projeto.');
+}
+
+if (!$project) {
+    die("Projeto não encontrado ou desativado.");
+}
+
+// ===== BUSCA COMENTÁRIOS ATIVOS =====
+try {
+    $stmt = $pdo->prepare("
+        SELECT c.*, u.name AS author_name
+        FROM comments c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.project_id = ? AND c.status = 1 AND u.status = 1
+        ORDER BY c.created_at DESC
+    ");
+    $stmt->execute(array($id));
+    $comments = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log('ERRO PROJECT_VIEW SELECT COMMENTS: ' . $e->getMessage());
+    $comments = array();
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
