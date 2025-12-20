@@ -64,3 +64,6 @@ build/
 *.bak
 *.tmp
 *.orig
+
+# Arquivo de variáveis de ambiente (NÃO versionar)
+.env
