@@ -218,5 +218,16 @@ $projects = $stmt->fetchAll();
 </div>
 
 <script src="assets/js/script.js"></script>
+
+<?php if (isset($_GET['login'])): ?>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Abre o modal de autenticação já na aba de login
+    openAuthModal();
+    showLogin();
+  });
+</script>
+<?php endif; ?>
+
 </body>
 </html>

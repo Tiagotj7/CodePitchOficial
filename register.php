@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
     if ($name === '' || $email === '' || $password === '') {
-        header("Location: index.php?register_error=1");
+        header("Location: index.php?register_error=1&login=1");
         exit;
     }
 
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute(array($email));
     if ($stmt->fetch()) {
-        header("Location: index.php?register_error=2");
+        header("Location: index.php?register_error=2&login=1");
         exit;
     }
 
@@ -25,8 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)");
     $stmt->execute(array($name, $email, $hash));
 
-    header("Location: index.php?register_success=1");
+    // Após cadastrar, redireciona já pedindo a tela de login
+    header("Location: index.php?register_success=1&login=1");
     exit;
 }
 
-header("Location: login.php");
+header("Location: index.php");
