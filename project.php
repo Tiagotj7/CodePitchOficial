@@ -6,6 +6,7 @@ $stmt = $pdo->query("
     SELECT p.*, u.name AS author_name
     FROM projects p
     JOIN users u ON u.id = p.user_id
+    WHERE p.status = 1 AND u.status = 1
     ORDER BY p.created_at DESC
 ");
 $projects = $stmt->fetchAll();

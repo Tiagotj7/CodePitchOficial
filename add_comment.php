@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt = $pdo->prepare("
-        INSERT INTO comments (project_id, user_id, comment)
-        VALUES (?, ?, ?)
+        INSERT INTO comments (project_id, user_id, comment, status)
+        VALUES (?, ?, ?, 1)
     ");
     $stmt->execute(array(
         $project_id,
