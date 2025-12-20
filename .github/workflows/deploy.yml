@@ -1,0 +1,25 @@
+name: 🚀 Deploy via FTP
+
+on:
+  push:
+    branches:
+      - main # ou "master" se for o seu branch principal
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧾 Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🚀 Deploy para FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST}}
+          username: ${{ secrets.FTP_USERNAME}}
+          password: ${{ secrets.FTP_PASSWORD}}
+
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          server-dir: /htdocs/ # pasta do seu servidor FTP
