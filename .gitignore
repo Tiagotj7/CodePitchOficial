@@ -1,1 +1,66 @@
+# ========================
+# Arquivos sensíveis
+# ========================
 .env
+*.key
+*.pem
+
+# ========================
+# Logs e cache
+# ========================
+*.log
+logs/
+tmp/
+cache/
+sessions/
+
+# ========================
+# Sistema operacional
+# ========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ========================
+# IDEs / Editores
+# ========================
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# ========================
+# PHP / Composer
+# ========================
+vendor/
+composer.phar
+
+# Se você não quiser versionar o lockfile, descomente:
+# composer.lock
+
+# ========================
+# Node / Front-end (se vier a usar)
+# ========================
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+dist/
+build/
+
+# ========================
+# Outros
+# ========================
+*.bak
+*.tmp
+*.orig
