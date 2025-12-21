@@ -638,6 +638,7 @@ header.scrolled {
   font-size: 1rem;
   transition: border-color 0.3s;
   font-family: inherit;
+  resize: none;
 }
 
 .input-group input:focus,
