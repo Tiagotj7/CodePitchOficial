@@ -882,7 +882,7 @@ header.scrolled {
   max-width: 220px;
 }
 
-/* ================= GALERIA DE MÍDIA (DETALHE DO PROJETO) ================= */
+/* ================= GALERIA DE MÍDIA (DETALHE/EDIÇÃO DO PROJETO) ================= */
 .project-media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -891,6 +891,7 @@ header.scrolled {
 }
 
 .project-media-item {
+  position: relative; /* importante para o botão de deletar */
   background-color: #21262d;
   border-radius: 6px;
   overflow: hidden;
@@ -904,4 +905,33 @@ header.scrolled {
   max-height: 140px;
   object-fit: cover;
   display: block;
+}
+
+/* Botão de deletar (X) sobre cada mídia */
+.delete-media-label {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #f85149;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.delete-media-label:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.delete-media-label input[type="checkbox"] {
+  display: none;
 }

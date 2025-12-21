@@ -28,6 +28,14 @@ if (empty($existingMedia) && !empty($project['image_url'])) {
     $existingMedia = array($project['image_url']);
 }
 
+// Valor exibido no campo de URL principal:
+// - se a imagem principal é um caminho interno (uploads/...), deixamos o campo em branco
+// - se é uma URL externa, mostramos ela
+$displayUrl = '';
+if (!empty($project['image_url']) && strpos($project['image_url'], 'uploads/') !== 0) {
+    $displayUrl = $project['image_url'];
+}
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,27 +45,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = isset($_POST['description']) ? trim($_POST['description']) : '';
     $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
-    // Recomeça a partir das mídias existentes
-    $media = $existingMedia;
+    // Índices de mídias marcadas para remoção
+    $deleteIdx = isset($_POST['delete_media']) ? $_POST['delete_media'] : array();
+    $deleteIdx = array_map('intval', (array)$deleteIdx);
 
-    // Atualiza a primeira mídia se a URL foi alterada
+    // 1) Começa removendo as mídias marcadas
+    $media = array();
+    foreach ($existingMedia as $idx => $path) {
+        if (in_array($idx, $deleteIdx, true)) {
+            // Se for arquivo interno, tenta apagar do disco
+            if (strpos($path, 'uploads/') === 0) {
+                $filePath = __DIR__ . '/' . $path;
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+            // Não adiciona ao array $media (removido)
+        } else {
+            $media[] = $path;
+        }
+    }
+
+    // 2) Aplica a URL manual (se enviada)
     if ($urlMedia !== '') {
         if (empty($media)) {
             $media[] = $urlMedia;
         } else {
-            // Se a URL mudou em relação à mídia principal antiga
-            if ($urlMedia !== $media[0]) {
-                $media[0] = $urlMedia;
-            }
+            // Substitui a mídia principal pela nova URL
+            $media[0] = $urlMedia;
         }
-    } else {
-        // Se o campo de URL foi esvaziado, mas existia mídia principal,
-        // não removemos as mídias antigas; apenas mantemos o array como está.
-        // Se quiser remover tudo quando limpar a URL e não enviar upload,
-        // seria necessário outra lógica/UI.
     }
+    // se a URL estiver vazia, mantemos a mídia principal atual (se existir)
 
-    // ===== TRATAR UPLOADS NOVOS =====
+    // 3) Processa novos uploads (adiciona até completar 5)
     if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
         $names  = $_FILES['media_files']['name'];
         $tmp    = $_FILES['media_files']['tmp_name'];
@@ -97,19 +117,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Remove mídias vazias e duplicadas simples
+    // 4) Limpeza: remove vazios, duplicados e garante no máximo 5
     $media = array_values(array_filter($media, function ($item) {
         return $item !== null && $item !== '';
     }));
     $media = array_values(array_unique($media));
 
-    // Garantir no máximo 5
     if (count($media) > 5) {
         $error = "Máximo de 5 mídias por projeto.";
     }
 
     if ($title === '' || $location === '' || $description === '' || $tags === '' || count($media) === 0) {
-        $error = $error ?: "Preencha todos os campos e tenha pelo menos uma mídia.";
+        $error = $error ?: "Preencha todos os campos e mantenha pelo menos uma mídia.";
     }
 
     if ($error === '') {
@@ -166,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Localização</label>
       </div>
       <div class="input-group">
-        <input type="url" name="image_url" value="<?= htmlspecialchars($project['image_url']) ?>" placeholder=" ">
+        <input type="url" name="image_url" value="<?= htmlspecialchars($displayUrl) ?>" placeholder=" ">
         <label>URL de Imagem/Vídeo principal (opcional se usar upload)</label>
       </div>
       <div class="upload-row">
@@ -186,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <?php if (!empty($existingMedia)): ?>
-        <p style="margin-bottom:0.5rem;">Mídias atuais (serão mantidas se você não remover/alterar manualmente via URL):</p>
+        <p style="margin-bottom:0.5rem;">Mídias atuais (clique no X para marcar para remoção):</p>
         <div class="project-media-grid">
           <?php
           $maxPreview = min(5, count($existingMedia));
@@ -204,6 +223,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <img src="<?= htmlspecialchars($m) ?>" alt="Mídia atual"
                      onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
               <?php endif; ?>
+
+              <!-- Botão X de remover (checkbox escondido) -->
+              <label class="delete-media-label" title="Marcar para remover esta mídia">
+                <input type="checkbox" name="delete_media[]" value="<?= $i ?>">
+                ✖
+              </label>
             </div>
           <?php endfor; ?>
         </div>
