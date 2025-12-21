@@ -5,10 +5,17 @@ require_once __DIR__ . '/auth.php';
 <header id="navbar">
   <div class="navbar">
     <h1>CodePitch</h1>
+
+    <!-- Botão hambúrguer (visível só no mobile via CSS) -->
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">
+      ☰
+    </button>
+
     <nav class="nav-links">
       <a href="index.php">Home</a>
       <a href="project.php">Explorar Projetos</a>
     </nav>
+
     <div class="user-actions">
       <?php if (!isLoggedIn()): ?>
         <button id="loginBtn" class="cta-button" onclick="openAuthModal()">

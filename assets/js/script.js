@@ -198,3 +198,10 @@ window.showLogin            = showLogin;
 window.openCreatePostModal  = openCreatePostModal;
 window.closeCreatePostModal = closeCreatePostModal;
 window.toggleUserMenu       = toggleUserMenu;
+window.toggleMobileMenu     = toggleMobileMenu;
+
+function toggleMobileMenu() {
+  const header = document.getElementById('navbar');
+  if (!header) return;
+  header.classList.toggle('mobile-open');
+}
