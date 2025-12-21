@@ -523,15 +523,17 @@ header.scrolled {
 
 /* Overlay de tela inteira */
 .auth-modal {
-  display: none;                       /* JS muda para block ao abrir */
+  display: none;
+  /* JS muda para block ao abrir */
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(5px);
   z-index: 3000;
-  overflow-y: auto;                    /* se o conteúdo for maior que a tela, rola */
+  overflow-y: auto;
+  /* se o conteúdo for maior que a tela, rola */
 }
 
 /* Container centralizado */
@@ -557,8 +559,8 @@ header.scrolled {
   z-index: 10;
 }
 
-.auth-close:hover { 
-  color: #c9d1d9; 
+.auth-close:hover {
+  color: #c9d1d9;
 }
 
 /* Caixa dos formulários */
@@ -566,12 +568,13 @@ header.scrolled {
   position: relative;
   width: 900px;
   max-width: 100%;
-  min-height: 520px;              /* <--- ESSENCIAL: garante altura visível */
+  min-height: 520px;
+  /* <--- ESSENCIAL: garante altura visível */
   max-height: 90vh;
   background: linear-gradient(45deg, #161b22, #0d1117);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 /* Seções de login/registro (layout já existente) */
@@ -690,13 +693,14 @@ header.scrolled {
 }
 
 /* Sobe o label ao focar ou quando o campo está preenchido */
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label,
-.input-group textarea:focus + label,
-.input-group textarea:not(:placeholder-shown) + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label,
+.input-group textarea:focus+label,
+.input-group textarea:not(:placeholder-shown)+label {
   top: 0;
   left: 0.5rem;
-  background-color: #161b22;  /* cor do fundo da form-box */
+  background-color: #161b22;
+  /* cor do fundo da form-box */
   padding: 0 0.5rem;
   font-size: 0.8rem;
   color: #58a6ff;
@@ -739,6 +743,7 @@ header.scrolled {
 
 /* Ajuste do botão dentro do modal de login/cadastro em telas menores */
 @media (max-width: 430px) {
+
   .form-box .btn,
   .welcome-box .btn {
     width: 100%;
@@ -750,7 +755,16 @@ header.scrolled {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 100px 2rem 2rem;  /* top 100px por causa do header fixo */
+  padding: 100px 2rem 2rem;
+  /* top 100px por causa do header fixo */
+}
+
+/* ================= MAIN PADRÃO PARA PÁGINAS SEM HERO ================= */
+.page-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 2rem 2rem;
+  /* top 120px por causa do header fixo */
 }
 
 /* ================= RESPONSIVIDADE 768px ================= */
@@ -760,6 +774,11 @@ header.scrolled {
   /* HEADER / NAVBAR */
   header {
     padding: 0.6rem 1rem;
+  }
+
+  .page-main {
+    max-width: 100%;
+    padding: 120px 1rem 2rem;
   }
 
   .navbar {
@@ -869,8 +888,10 @@ header.scrolled {
   .forms-container {
     width: 100%;
     max-width: 420px;
-    min-height: 630px;              /* altura mínima menor pro mobile */
-    max-height: calc(100vh - 3rem); /* não passa muito da tela */
+    min-height: 630px;
+    /* altura mínima menor pro mobile */
+    max-height: calc(100vh - 3rem);
+    /* não passa muito da tela */
     border-radius: 12px;
   }
 
@@ -884,9 +905,11 @@ header.scrolled {
     padding: 1.5rem 1.25rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;   /* centraliza verticalmente */
-    align-items: center;       /* centraliza horizontalmente */
-    flex: 1; 
+    justify-content: center;
+    /* centraliza verticalmente */
+    align-items: center;
+    /* centraliza horizontalmente */
+    flex: 1;
   }
 
   .welcome-box h2 {
@@ -968,6 +991,14 @@ header.scrolled {
     padding: 0.5rem 0.75rem;
   }
 
+  .page-main {
+    max-width: 100%;
+    padding-top: 130px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
+  }
+
   .navbar {
     max-width: 100%;
     width: 100%;
@@ -1026,7 +1057,8 @@ header.scrolled {
   /* CONTEÚDO PRINCIPAL DAS OUTRAS PÁGINAS (profile.php, project_view.php, project.php, etc.) */
   .container {
     max-width: 100%;
-    padding-top: 120px;         /* um pouco mais por causa do header */
+    padding-top: 120px;
+    /* um pouco mais por causa do header */
     padding-left: 1rem;
     padding-right: 1rem;
     padding-bottom: 2rem;
@@ -1094,7 +1126,8 @@ header.scrolled {
 
   .forms-container {
     max-width: 100%;
-    min-height: 630px;               /* um pouco menor em telas bem estreitas */
+    min-height: 630px;
+    /* um pouco menor em telas bem estreitas */
     margin: 0 0.5rem;
     max-height: calc(100vh - 2.5rem);
   }
@@ -1117,7 +1150,7 @@ header.scrolled {
     font-size: 0.9rem;
   }
 
-    .form-title {
+  .form-title {
     font-size: 1.4rem;
   }
 
@@ -1175,11 +1208,11 @@ header.scrolled {
   }
 }
 
-  .form-box .btn,
-  .welcome-box .btn {
-    width: 100%;
-    text-align: center;
-  }
+.form-box .btn,
+.welcome-box .btn {
+  width: 100%;
+  text-align: center;
+}
 
 /* ================= UPLOAD DE MÍDIA ================= */
 .upload-row {
