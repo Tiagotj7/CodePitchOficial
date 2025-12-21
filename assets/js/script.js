@@ -137,6 +137,13 @@ function setupGlobalEvents() {
       header.classList.remove('scrolled');
     }
   });
+
+    // Botão de menu mobile (hambúrguer)
+  const mobileToggleBtn = document.querySelector('.mobile-toggle');
+  if (mobileToggleBtn) {
+    mobileToggleBtn.addEventListener('click', toggleMobileMenu);
+  }
+
 }
 
 // ================= LABEL DO INPUT DE MÍDIA =================

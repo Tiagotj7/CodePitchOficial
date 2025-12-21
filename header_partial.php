@@ -7,7 +7,7 @@ require_once __DIR__ . '/auth.php';
     <h1>CodePitch</h1>
 
     <!-- Botão hambúrguer (visível só no mobile via CSS) -->
-    <button class="mobile-toggle" onclick="toggleMobileMenu()">
+    <button class="mobile-toggle" type="button">
       ☰
     </button>
 
