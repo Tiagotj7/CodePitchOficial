@@ -1094,7 +1094,7 @@ header.scrolled {
 
   .forms-container {
     max-width: 100%;
-    min-height: 600px;               /* um pouco menor em telas bem estreitas */
+    min-height: 630px;               /* um pouco menor em telas bem estreitas */
     margin: 0 0.5rem;
     max-height: calc(100vh - 2.5rem);
   }
