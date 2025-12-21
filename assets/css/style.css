@@ -769,6 +769,14 @@ header.scrolled {
   /* sem padding-left/right: quem cuida disso é .projects-section / .profile-section */
 }
 
+/* Página de detalhe do projeto (project_view.php) */
+.project-view-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 140px;
+  /* espaço por causa do header fixo */
+}
+
 /* ================= RESPONSIVIDADE 768px ================= */
 
 @media (max-width: 768px) {
@@ -783,6 +791,14 @@ header.scrolled {
     padding-top: 120px;
     padding-bottom: 2rem;
     /* sem padding-left/right aqui também */
+  }
+
+  .project-view-page {
+    max-width: 100%;
+    padding-top: 140px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
   }
 
   .navbar {
@@ -1001,6 +1017,14 @@ header.scrolled {
     /* igual ao index */
     padding-bottom: 2rem;
     /* sem left/right aqui também */
+  }
+
+  .project-view-page {
+    max-width: 100%;
+    padding-top: 140px;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-bottom: 2rem;
   }
 
   .navbar {
