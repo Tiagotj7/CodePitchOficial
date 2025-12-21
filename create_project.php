@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
     $maxFiles   = 5;
-    $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'mov');
+    $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
     $uploadLimit = ini_get('upload_max_filesize'); // ex: "10M"
 
     // ====== LISTA DE MÍDIAS (URL + UPLOADS) ======

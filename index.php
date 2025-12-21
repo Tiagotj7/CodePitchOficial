@@ -207,7 +207,7 @@ $projects = $stmt->fetchAll();
           <label>URL de Imagem (opcional se usar upload)</label>
         </div>
         <div class="upload-row">
-          <input type="file" id="mediaFile" name="media_files[]" accept="image/*,video/*" hidden multiple>
+          <input type="file" id="mediaFile" name="media_files[]" accept="image/*" hidden multiple>
           <button type="button" class="upload-btn" onclick="document.getElementById('mediaFile').click()">
             📁 Enviar imagem (até 5)
           </button>
