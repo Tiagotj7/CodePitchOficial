@@ -243,11 +243,11 @@ $projects = $stmt->fetchAll();
             <h2 class="form-title animation" style="--i:1">Entrar</h2>
             <form id="login-form" method="post" action="login.php">
               <div class="input-group animation" style="--i:4">
-                <input type="email" name="email" required />
+                <input type="email" name="email" placeholder=" " required />
                 <label>Email</label>
               </div>
               <div class="input-group animation" style="--i:5">
-                <input type="password" name="password" required />
+                <input type="password" name="password" placeholder=" " required />
                 <label>Senha</label>
               </div>
               <button type="submit" class="btn animation" style="--i:7">Entrar</button>
@@ -278,15 +278,15 @@ $projects = $stmt->fetchAll();
             <h2 class="form-title animation" style="--i:1">Criar Conta</h2>
             <form id="register-form" method="post" action="register.php">
               <div class="input-group animation" style="--i:4">
-                <input type="text" name="name" required />
+                <input type="text" name="name" placeholder=" " required />
                 <label>Nome</label>
               </div>
               <div class="input-group animation" style="--i:5">
-                <input type="email" name="email" required />
+                <input type="email" name="email" placeholder=" " required />
                 <label>Email</label>
               </div>
               <div class="input-group animation" style="--i:6">
-                <input type="password" name="password" required />
+                <input type="password" name="password" placeholder=" " required />
                 <label>Senha</label>
               </div>
               <button type="submit" class="btn animation" style="--i:7">CADASTRAR</button>
