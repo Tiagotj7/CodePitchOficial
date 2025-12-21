@@ -5,11 +5,12 @@
   box-sizing: border-box;
 }
 
+/* IMPORTANTE: evitar barra horizontal e usar toda largura */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; /* evita barra horizontal no mobile */
+  overflow-x: hidden;
 }
 
 body {
@@ -742,48 +743,35 @@ header.scrolled {
   }
 
   .navbar {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .navbar h1 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     white-space: nowrap;
+    order: 1;
   }
 
-  /* Botão de menu aparece no mobile */
-  .mobile-toggle {
-    display: block;
-  }
-
-  /* Esconde menus por padrão no mobile */
-  .nav-links,
-  .user-actions {
-    display: none;
-  }
-
-  /* Quando o header tiver a classe .mobile-open, mostramos os menus empilhados */
-  header.mobile-open .nav-links,
-  header.mobile-open .user-actions {
-    display: flex;
-    width: 100%;
-  }
-
-  header.mobile-open .nav-links {
-    order: 2;
+  .nav-links {
     position: static;
     transform: none;
+    order: 2;
+    width: 100%;
     justify-content: center;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     margin-bottom: 0.25rem;
     gap: 1.5rem;
   }
 
-  header.mobile-open .user-actions {
+  .user-actions {
     order: 3;
+    width: 100%;
     justify-content: center;
-    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
   }
 
   .cta-button {
@@ -793,7 +781,7 @@ header.scrolled {
 
   /* CONTAINER GERAL */
   .container {
-    padding-top: 72px;
+    padding-top: 80px;
     max-width: 100%;
     padding: 80px 1rem 2rem;
   }
@@ -965,7 +953,7 @@ header.scrolled {
   }
 
   .navbar h1 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   .nav-links a {
@@ -984,36 +972,11 @@ header.scrolled {
     font-size: 0.75rem;
   }
 
-  .profile-header-card {
-    padding: 1.25rem;
-  }
-
-  .profile-avatar {
-    width: 70px;
-    height: 70px;
-    font-size: 1.8rem;
-  }
-
-  .profile-info h2 {
-    font-size: 1.4rem;
-  }
-
-  .profile-email,
-  .profile-meta {
-    font-size: 0.8rem;
-  }
-
-  .social-link {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.55rem;
-  }
-
   .modal-content {
     padding: 1.25rem;
     margin-top: 15%;
   }
 }
-
 /* ================= UPLOAD DE MÍDIA ================= */
 .upload-row {
   display: flex;
