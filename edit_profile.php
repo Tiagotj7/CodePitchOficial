@@ -22,7 +22,7 @@ if (!isAdmin() && currentUserId() !== $editId) {
 
 // Busca usuário
 $stmt = $pdo->prepare("
-    SELECT id, name, email, bio, github, linkedin, twitter, website
+    SELECT id, name, email, bio, github, linkedin, instagram, website
     FROM users
     WHERE id = ? AND status = 1
 ");
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio      = isset($_POST['bio']) ? trim($_POST['bio']) : '';
     $github   = isset($_POST['github']) ? trim($_POST['github']) : '';
     $linkedin = isset($_POST['linkedin']) ? trim($_POST['linkedin']) : '';
-    $twitter  = isset($_POST['twitter']) ? trim($_POST['twitter']) : '';
+    $instagram  = isset($_POST['instagram']) ? trim($_POST['instagram']) : '';
     $website  = isset($_POST['website']) ? trim($_POST['website']) : '';
 
     if ($name === '') {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $upd = $pdo->prepare("
             UPDATE users
-            SET name = ?, bio = ?, github = ?, linkedin = ?, twitter = ?, website = ?
+            SET name = ?, bio = ?, github = ?, linkedin = ?, instagram = ?, website = ?
             WHERE id = ?
         ");
         $upd->execute(array(
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $bio,
             $github,
             $linkedin,
-            $twitter,
+            $instagram,
             $website,
             $editId
         ));
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userProfile['bio']      = $bio;
         $userProfile['github']   = $github;
         $userProfile['linkedin'] = $linkedin;
-        $userProfile['twitter']  = $twitter;
+        $userProfile['instagram']  = $instagram;
         $userProfile['website']  = $website;
     }
 }
@@ -132,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>LinkedIn (URL)</label>
       </div>
       <div class="input-group">
-        <input type="url" name="twitter" value="<?= htmlspecialchars($userProfile['twitter']) ?>" placeholder=" ">
-        <label>Twitter / X (URL)</label>
+        <input type="url" name="instagram" value="<?= htmlspecialchars($userProfile['instagram']) ?>" placeholder=" ">
+        <label>instagram / X (URL)</label>
       </div>
       <div class="input-group">
         <input type="url" name="website" value="<?= htmlspecialchars($userProfile['website']) ?>" placeholder=" ">

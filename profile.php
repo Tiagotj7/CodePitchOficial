@@ -17,7 +17,7 @@ if (!$profileId) {
 
 // Busca usuário
 $stmt = $pdo->prepare("
-    SELECT id, name, email, status, is_admin, bio, github, linkedin, twitter, website, created_at
+    SELECT id, name, email, status, is_admin, bio, github, linkedin, instagram, website, created_at
     FROM users
     WHERE id = ? AND status = 1
 ");
@@ -90,8 +90,8 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
           <?php if (!empty($userProfile['linkedin'])): ?>
             <a href="<?= htmlspecialchars($userProfile['linkedin']) ?>" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
           <?php endif; ?>
-          <?php if (!empty($userProfile['twitter'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['twitter']) ?>" target="_blank" rel="noopener" class="social-link">Twitter</a>
+          <?php if (!empty($userProfile['instagram'])): ?>
+            <a href="<?= htmlspecialchars($userProfile['instagram']) ?>" target="_blank" rel="noopener" class="social-link">instagram</a>
           <?php endif; ?>
           <?php if (!empty($userProfile['website'])): ?>
             <a href="<?= htmlspecialchars($userProfile['website']) ?>" target="_blank" rel="noopener" class="social-link">Site</a>
