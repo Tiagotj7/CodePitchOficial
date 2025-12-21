@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND status = 1");
     $stmt->execute(array($email));
     $user = $stmt->fetch();
 
@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['user_id']    = $user['id'];
     $_SESSION['user_name']  = $user['name'];
     $_SESSION['user_email'] = $user['email'];
+    $_SESSION['is_admin']   = isset($user['is_admin']) ? (int)$user['is_admin'] : 0;
 
     header("Location: index.php");
     exit;

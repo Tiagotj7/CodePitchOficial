@@ -22,7 +22,12 @@ require_once __DIR__ . '/auth.php';
         </button>
         <div id="userDropdown" class="user-dropdown">
           <button class="user-button" onclick="toggleUserMenu()">
-            👤 <span id="userNameDisplay"><?= htmlspecialchars(currentUserName()) ?></span>
+            👤 <span id="userNameDisplay">
+  <?= htmlspecialchars(currentUserName()) ?>
+  <?php if (isAdmin()): ?>
+    <span style="font-size:0.75rem;color:#ffd33d;">(ADM)</span>
+  <?php endif; ?>
+</span>
           </button>
           <div id="dropdownContent" class="dropdown-content">
             <form method="post" action="logout.php">

@@ -10,7 +10,7 @@ $stmt = $pdo->prepare("SELECT * FROM projects WHERE id = ?");
 $stmt->execute(array($id));
 $project = $stmt->fetch();
 
-if (!$project || $project['user_id'] != currentUserId()) {
+if (!$project || (!isAdmin() && $project['user_id'] != currentUserId())) {
     die("Projeto não encontrado ou sem permissão.");
 }
 

@@ -58,7 +58,7 @@ $projects = $stmt->fetchAll();
                 <div class="project-author">Por <?= htmlspecialchars($project['author_name']) ?></div>
                 <div class="project-location">📍 <?= htmlspecialchars($project['location']) ?></div>
               </div>
-              <?php if (isLoggedIn() && currentUserId() == $project['user_id']): ?>
+              <?php if (isLoggedIn() && (currentUserId() == $project['user_id'] || isAdmin())): ?>
                 <div class="project-actions-menu">
                   <a class="menu-btn" href="edit_project.php?id=<?= $project['id'] ?>">✏️</a>
                   <a class="menu-btn"
