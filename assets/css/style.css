@@ -6,7 +6,8 @@
 }
 
 /* IMPORTANTE: evitar barra horizontal e usar toda largura */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -154,7 +155,7 @@ header.scrolled {
   top: 100%;
   background-color: #161b22;
   min-width: 160px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   z-index: 1;
   border: 1px solid #30363d;
@@ -308,7 +309,7 @@ header.scrolled {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #58a6ff,#7c3aed);
+  background: linear-gradient(45deg, #58a6ff, #7c3aed);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -411,7 +412,7 @@ header.scrolled {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .modal-content {
@@ -517,26 +518,56 @@ header.scrolled {
 }
 
 /* ================= MODAL DE AUTENTICAÇÃO ================= */
+
+/* Overlay da tela toda */
 .auth-modal {
   display: none;
+  /* é trocado para block pelo JS */
   position: fixed;
   z-index: 3000;
-  left: 0;
-  top: 0;
+  inset: 0;
+  /* top/right/bottom/left: 0 */
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(5px);
+  overflow-y: auto;
+  /* se o conteúdo for maior que a tela, rola */
 }
 
+/* Container centralizador */
 .auth-container {
-  position: relative;
+  min-height: 100vh;
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 2rem 1rem;
 }
+
+/* Caixa com os formulários */
+.forms-container {
+  position: relative;
+  width: 900px;
+  max-width: 100%;
+  /* nunca passa da largura da tela */
+  max-height: 90vh;
+  /* nunca passa da altura útil */
+  background: linear-gradient(45deg, #161b22, #0d1117);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Seções (login / registro) continuam como já estavam */
+.form-section {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transition: transform 0.8s ease-in-out;
+}
+
 
 .auth-close {
   position: absolute;
@@ -550,17 +581,6 @@ header.scrolled {
 
 .auth-close:hover {
   color: #c9d1d9;
-}
-
-/* Forms Container */
-.forms-container {
-  position: relative;
-  width: 900px;
-  height: 600px;
-  background: linear-gradient(45deg, #161b22, #0d1117);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 /* Form Sections */
@@ -666,10 +686,10 @@ header.scrolled {
   transition: all 0.3s;
 }
 
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label,
-.input-group textarea:focus + label,
-.input-group textarea:not(:placeholder-shown) + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label,
+.input-group textarea:focus+label,
+.input-group textarea:not(:placeholder-shown)+label {
   top: 0;
   left: 0.5rem;
   background-color: #161b22;
@@ -737,6 +757,7 @@ header.scrolled {
 /* ================= RESPONSIVIDADE 768px ================= */
 
 @media (max-width: 768px) {
+
   /* HEADER / NAVBAR */
   header {
     padding: 0.6rem 1rem;
@@ -840,16 +861,21 @@ header.scrolled {
     max-height: 80vh;
   }
 
+  /* AUTH MODAL - AJUSTE MOBILE */
   .auth-container {
-    align-items: flex-start;
-    padding-top: 4rem;
+    align-items: center;
+    /* centraliza verticalmente */
+    padding: 1.5rem 0.75rem;
   }
 
   .forms-container {
     width: 100%;
+    max-width: 420px;
+    /* largura máxima confortável em pé */
     height: auto;
-    max-height: 90vh;
-    border-radius: 0;
+    max-height: calc(100vh - 3rem);
+    /* deixa um respiro nas bordas */
+    border-radius: 12px;
   }
 
   .form-section {
@@ -859,15 +885,19 @@ header.scrolled {
   .form-box,
   .welcome-box {
     width: 100%;
-    padding: 1.75rem 1.5rem;
+    padding: 1.5rem 1.25rem;
   }
 
   .welcome-box h2 {
     font-size: 2rem;
   }
 
+  .welcome-box p {
+    font-size: 0.95rem;
+  }
+
   .form-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   /* PERFIL */
@@ -940,8 +970,10 @@ header.scrolled {
 /* ================= RESPONSIVIDADE 480px ================= */
 /* ================= MOBILE ESPECÍFICO (largura até ~412px) ================= */
 @media (max-width: 430px) {
+
   /* Garantir que nada ultrapasse a largura da tela */
-  html, body {
+  html,
+  body {
     width: 100%;
     overflow-x: hidden;
   }
@@ -1008,7 +1040,8 @@ header.scrolled {
 
   /* CONTEÚDO PRINCIPAL DAS OUTRAS PÁGINAS (profile.php, project_view.php, project.php, etc.) */
   .container {
-    padding-top: 130px;       /* AQUI é o que garante que o título não fique embaixo do header */
+    padding-top: 130px;
+    /* AQUI é o que garante que o título não fique embaixo do header */
     padding-left: 1rem;
     padding-right: 1rem;
   }
@@ -1070,14 +1103,13 @@ header.scrolled {
   }
 
   .auth-container {
-    align-items: flex-start;
-    padding-top: 3.5rem;
+    padding: 1.25rem 0.5rem;
   }
 
   .forms-container {
-    width: 100%;
-    border-radius: 0;
-    max-height: 90vh;
+    max-width: 100%;
+    margin: 0 0.5rem;
+    max-height: calc(100vh - 2.5rem);
   }
 
   .form-section {
@@ -1091,7 +1123,15 @@ header.scrolled {
   }
 
   .welcome-box h2 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
+  }
+
+  .welcome-box p {
+    font-size: 0.9rem;
+  }
+
+    .form-title {
+    font-size: 1.4rem;
   }
 
   /* PERFIL (profile.php) */
@@ -1151,7 +1191,8 @@ header.scrolled {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin: -0.5rem 0 1.5rem 0; /* aproxima do campo de URL */
+  margin: -0.5rem 0 1.5rem 0;
+  /* aproxima do campo de URL */
 }
 
 .upload-btn {
@@ -1268,11 +1309,13 @@ header.scrolled {
 }
 
 .upload-feedback li.ok {
-  color: #2ea043; /* verde */
+  color: #2ea043;
+  /* verde */
 }
 
 .upload-feedback li.error {
-  color: #f85149; /* vermelho */
+  color: #f85149;
+  /* vermelho */
 }
 
 .upload-feedback .icon {
