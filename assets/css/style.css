@@ -640,6 +640,112 @@ header.scrolled {
   line-height: 1.6;
 }
 
+/* ================= FORMULÁRIOS GERAIS (inputs, labels, botões) ================= */
+
+/* Container dos campos */
+.input-group {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs e textareas com tema dark */
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 1rem;
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #c9d1d9;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s, background-color 0.3s;
+  outline: none;
+}
+
+/* Textarea menor por padrão */
+.input-group textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* Foco destaca a borda */
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #58a6ff;
+  background-color: #161b22;
+}
+
+/* Label flutuante */
+.input-group label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: #8b949e;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: all 0.3s;
+}
+
+/* Sobe o label ao focar ou quando o campo está preenchido */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group textarea:focus + label,
+.input-group textarea:not(:placeholder-shown) + label {
+  top: 0;
+  left: 0.5rem;
+  background-color: #161b22;  /* cor do fundo da form-box */
+  padding: 0 0.5rem;
+  font-size: 0.8rem;
+  color: #58a6ff;
+}
+
+/* BOTÕES BASE */
+.btn {
+  padding: 0.9rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  background-color: #58a6ff;
+  color: #ffffff;
+  letter-spacing: 0.03em;
+}
+
+/* Hover */
+.btn:hover {
+  background-color: #4595ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(88, 166, 255, 0.3);
+}
+
+/* Botão secundário (uso no painel lateral do login/registro) */
+.btn.secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+.btn.secondary:hover {
+  background-color: #ffffff;
+  color: #58a6ff;
+  box-shadow: none;
+}
+
+/* Ajuste do botão dentro do modal de login/cadastro em telas menores */
+@media (max-width: 430px) {
+  .form-box .btn,
+  .welcome-box .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 /* ================= CONTAINER GENÉRICO ================= */
 .container {
   padding-top: 100px;
@@ -1061,6 +1167,12 @@ header.scrolled {
     margin-top: 0.5rem;
   }
 }
+
+  .form-box .btn,
+  .welcome-box .btn {
+    width: 100%;
+    text-align: center;
+  }
 
 /* ================= UPLOAD DE MÍDIA ================= */
 .upload-row {
