@@ -938,46 +938,6 @@ header.scrolled {
 }
 
 /* ================= RESPONSIVIDADE 480px ================= */
-
-@media (max-width: 480px) {
-  .hero {
-    padding: 80px 1rem 2rem;
-  }
-
-  .hero h2 {
-    font-size: 1.6rem;
-  }
-
-  .hero p {
-    font-size: 0.95rem;
-  }
-
-  .navbar h1 {
-    font-size: 1.3rem;
-  }
-
-  .nav-links a {
-    font-size: 0.9rem;
-  }
-
-  .project-card {
-    padding: 0.9rem;
-  }
-
-  .project-description {
-    font-size: 0.9rem;
-  }
-
-  .project-tags .tag {
-    font-size: 0.75rem;
-  }
-
-  .modal-content {
-    padding: 1.25rem;
-    margin-top: 15%;
-  }
-}
-
 /* ================= MOBILE ESPECÍFICO (largura até ~412px) ================= */
 @media (max-width: 430px) {
   /* Garantir que nada ultrapasse a largura da tela */
@@ -1031,9 +991,9 @@ header.scrolled {
     font-size: 0.8rem;
   }
 
-  /* HERO – mais espaço em cima para não ser coberta pelo header */
+  /* HERO – mais espaço em cima para não ser coberta pelo header (apenas index.php) */
   .hero {
-    padding: 130px 1rem 2rem; /* 130px de topo garante que o texto não fica cortado */
+    padding: 130px 1rem 2rem;
   }
 
   .hero h2 {
@@ -1046,7 +1006,23 @@ header.scrolled {
     margin-top: 0.5rem;
   }
 
-  /* CARROSSEL */
+  /* CONTEÚDO PRINCIPAL DAS OUTRAS PÁGINAS (profile.php, project_view.php, project.php, etc.) */
+  .container {
+    padding-top: 130px;       /* AQUI é o que garante que o título não fique embaixo do header */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .projects-section {
+    margin: 1.75rem auto;
+    padding: 0 0.25rem;
+  }
+
+  .projects-section h2 {
+    font-size: 1.4rem;
+  }
+
+  /* CARROSSEL (index) */
   .carousel-container {
     margin: 1rem 0.75rem;
   }
@@ -1061,22 +1037,6 @@ header.scrolled {
 
   .carousel-slide p {
     font-size: 0.9rem;
-  }
-
-  /* CONTEÚDO PRINCIPAL */
-  .container {
-    padding-top: 90px; /* header + hero já dão espaço */
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .projects-section {
-    margin: 1.75rem auto;
-    padding: 0 0.25rem;
-  }
-
-  .projects-section h2 {
-    font-size: 1.4rem;
   }
 
   /* GRID DE PROJETOS: 1 coluna */
@@ -1134,7 +1094,7 @@ header.scrolled {
     font-size: 1.8rem;
   }
 
-  /* PERFIL */
+  /* PERFIL (profile.php) */
   .profile-section {
     padding: 0 0.5rem 2rem;
   }
@@ -1163,7 +1123,7 @@ header.scrolled {
     padding: 0.25rem 0.5rem;
   }
 
-  /* GALERIA DE MÍDIA NO DETALHE DO PROJETO */
+  /* GALERIA DE MÍDIA NO DETALHE DO PROJETO (project_view.php) */
   .project-media-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
