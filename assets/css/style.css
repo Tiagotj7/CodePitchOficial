@@ -891,11 +891,12 @@ header.scrolled {
 }
 
 .project-media-item {
-  position: relative; /* importante para o botão de deletar */
+  position: relative;
   background-color: #21262d;
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid #30363d;
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
 }
 
 .project-media-item img,
@@ -905,6 +906,11 @@ header.scrolled {
   max-height: 140px;
   object-fit: cover;
   display: block;
+}
+
+/* Checkbox escondido */
+.delete-media-checkbox {
+  display: none;
 }
 
 /* Botão de deletar (X) sobre cada mídia */
@@ -923,7 +929,7 @@ header.scrolled {
   justify-content: center;
   cursor: pointer;
   opacity: 0.85;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 
@@ -932,6 +938,15 @@ header.scrolled {
   transform: scale(1.05);
 }
 
-.delete-media-label input[type="checkbox"] {
-  display: none;
+/* Estado visual quando marcado para exclusão */
+.project-media-item.marked-delete {
+  opacity: 0.5;
+  filter: grayscale(0.8);
+  transform: scale(0.98);
+}
+
+.project-media-item.marked-delete .delete-media-label {
+  background-color: #161b22;
+  color: #f85149;
+  border: 2px solid #f85149;
 }

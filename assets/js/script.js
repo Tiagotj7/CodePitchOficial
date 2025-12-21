@@ -3,6 +3,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   initCarousel();
   setupGlobalEvents();
+  setupMediaFileLabel();
+  setupDeleteMediaCheckboxes();
 });
 
 // ================= CARROSSEL =================
@@ -10,8 +12,8 @@ function initCarousel() {
   const track = document.getElementById('carouselTrack');
   if (!track) return;
 
-  const slides = Array.from(track.children);
-  const dots = Array.from(document.querySelectorAll('.nav-dot'));
+  const slides  = Array.from(track.children);
+  const dots    = Array.from(document.querySelectorAll('.nav-dot'));
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   let currentSlide = 0;
@@ -64,7 +66,7 @@ function closeAuthModal() {
 }
 
 function showRegister() {
-  const loginSection = document.getElementById('loginSection');
+  const loginSection    = document.getElementById('loginSection');
   const registerSection = document.getElementById('registerSection');
   if (loginSection && registerSection) {
     loginSection.classList.add('register-active');
@@ -73,7 +75,7 @@ function showRegister() {
 }
 
 function showLogin() {
-  const loginSection = document.getElementById('loginSection');
+  const loginSection    = document.getElementById('loginSection');
   const registerSection = document.getElementById('registerSection');
   if (loginSection && registerSection) {
     loginSection.classList.remove('register-active');
@@ -106,22 +108,19 @@ function toggleUserMenu() {
 
 // ================= EVENTOS GLOBAIS =================
 function setupGlobalEvents() {
-  // Fecha modais ao clicar fora
   window.addEventListener('click', (e) => {
-    const authModal = document.getElementById('authModal');
+    const authModal   = document.getElementById('authModal');
     const createModal = document.getElementById('createPostModal');
 
     if (e.target === authModal) closeAuthModal();
     if (e.target === createModal) closeCreatePostModal();
 
-    // Fecha dropdown de usuário ao clicar fora
     if (!e.target.closest('.user-dropdown')) {
       const dropdown = document.getElementById('dropdownContent');
       if (dropdown) dropdown.style.display = 'none';
     }
   });
 
-  // ESC fecha modais
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeAuthModal();
@@ -129,7 +128,6 @@ function setupGlobalEvents() {
     }
   });
 
-  // Efeito de header escuro ao scroll
   window.addEventListener('scroll', () => {
     const header = document.querySelector('header');
     if (!header) return;
@@ -141,41 +139,62 @@ function setupGlobalEvents() {
   });
 }
 
-// Exporta funções pro HTML (onclick)
-window.openAuthModal = openAuthModal;
-window.closeAuthModal = closeAuthModal;
-window.showRegister = showRegister;
-window.showLogin = showLogin;
-window.openCreatePostModal = openCreatePostModal;
-window.closeCreatePostModal = closeCreatePostModal;
-window.toggleUserMenu = toggleUserMenu;
-
-// Mostrar nome dos arquivos selecionados e limitar a 5
-document.addEventListener('DOMContentLoaded', () => {
-  const fileInput = document.getElementById('mediaFile');
+// ================= LABEL DO INPUT DE MÍDIA =================
+function setupMediaFileLabel() {
+  const fileInput    = document.getElementById('mediaFile');
   const fileNameSpan = document.getElementById('uploadFileName');
 
-  if (fileInput && fileNameSpan) {
-    fileInput.addEventListener('change', () => {
-      const files = fileInput.files;
+  if (!fileInput || !fileNameSpan) return;
 
-      if (!files || files.length === 0) {
-        fileNameSpan.textContent = '';
-        return;
-      }
+  fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
 
-      if (files.length > 5) {
-        alert('Você pode enviar no máximo 5 arquivos (imagens ou vídeos) por projeto.');
-        fileInput.value = '';
-        fileNameSpan.textContent = '';
-        return;
-      }
+    if (!files || files.length === 0) {
+      fileNameSpan.textContent = '';
+      return;
+    }
 
-      if (files.length === 1) {
-        fileNameSpan.textContent = files[0].name;
+    if (files.length > 5) {
+      alert('Você pode enviar no máximo 5 arquivos (imagens ou vídeos) por projeto.');
+      fileInput.value = '';
+      fileNameSpan.textContent = '';
+      return;
+    }
+
+    const names = Array.from(files).map(f => f.name);
+    fileNameSpan.textContent = names.join(', ');
+  });
+}
+
+// ================= MARCAR CARD DE MÍDIA PARA EXCLUSÃO =================
+function setupDeleteMediaCheckboxes() {
+  const checkboxes = document.querySelectorAll('.delete-media-checkbox');
+  if (!checkboxes.length) return;
+
+  checkboxes.forEach(cb => {
+    const item = cb.closest('.project-media-item');
+    if (!item) return;
+
+    // Estado inicial (se algum vier marcado por algum motivo)
+    if (cb.checked) {
+      item.classList.add('marked-delete');
+    }
+
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        item.classList.add('marked-delete');
       } else {
-        fileNameSpan.textContent = `${files.length} arquivos selecionados`;
+        item.classList.remove('marked-delete');
       }
     });
-  }
-});
+  });
+}
+
+// Exporta funções pro HTML (onclick)
+window.openAuthModal        = openAuthModal;
+window.closeAuthModal       = closeAuthModal;
+window.showRegister         = showRegister;
+window.showLogin            = showLogin;
+window.openCreatePostModal  = openCreatePostModal;
+window.closeCreatePostModal = closeCreatePostModal;
+window.toggleUserMenu       = toggleUserMenu;

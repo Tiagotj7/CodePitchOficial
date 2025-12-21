@@ -213,6 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               $m = $existingMedia[$i];
               $ext = strtolower(pathinfo($m, PATHINFO_EXTENSION));
               $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
+              $checkboxId = 'delete-media-' . $i;
           ?>
             <div class="project-media-item">
               <?php if ($isVideo): ?>
@@ -224,9 +225,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                      onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
               <?php endif; ?>
 
-              <!-- Botão X de remover (checkbox escondido) -->
-              <label class="delete-media-label" title="Marcar para remover esta mídia">
-                <input type="checkbox" name="delete_media[]" value="<?= $i ?>">
+              <!-- Checkbox escondido + label X -->
+              <input
+                type="checkbox"
+                class="delete-media-checkbox"
+                id="<?= $checkboxId ?>"
+                name="delete_media[]"
+                value="<?= $i ?>"
+              >
+              <label class="delete-media-label" for="<?= $checkboxId ?>" title="Marcar para remover esta mídia">
                 ✖
               </label>
             </div>
