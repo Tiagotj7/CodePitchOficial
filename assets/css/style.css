@@ -871,7 +871,7 @@ header.scrolled {
   .forms-container {
     width: 100%;
     max-width: 420px;
-    min-height: 560px;              /* altura mínima menor pro mobile */
+    min-height: 630px;              /* altura mínima menor pro mobile */
     max-height: calc(100vh - 3rem); /* não passa muito da tela */
     border-radius: 12px;
   }
