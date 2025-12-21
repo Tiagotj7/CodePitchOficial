@@ -1214,6 +1214,25 @@ header.scrolled {
   text-align: center;
 }
 
+/* ================= UNIFICAR LAYOUT DAS OUTRAS PÁGINAS NO MOBILE ================= */
+/* Faz qualquer <main> ter a mesma "coluna" do index em telas tipo 412x915 */
+@media (max-width: 430px) {
+
+  /* Garante coluna central em TODAS as páginas que usam <main> */
+  main {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* Ajusta o espaçamento do conteúdo principal das páginas sem hero */
+  main .projects-section,
+  main .profile-section {
+    margin-top: 1.5rem;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
 /* ================= UPLOAD DE MÍDIA ================= */
 .upload-row {
   display: flex;
