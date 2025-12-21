@@ -2,7 +2,7 @@
 require 'db.php';
 require 'auth.php';
 
-// Busca últimos 6 projetos
+// Busca últimos 6 projetos ativos
 $stmt = $pdo->query("
     SELECT p.*, u.name AS author_name
     FROM projects p
@@ -75,6 +75,11 @@ $projects = $stmt->fetchAll();
       <p class="no-projects">Nenhum projeto encontrado.</p>
     <?php else: ?>
       <?php foreach ($projects as $project): ?>
+        <?php
+          $mediaUrl = htmlspecialchars($project['image_url']);
+          $ext = strtolower(pathinfo($project['image_url'], PATHINFO_EXTENSION));
+          $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
+        ?>
         <div class="project-card">
           <div class="project-header">
             <div class="project-avatar">
@@ -94,11 +99,20 @@ $projects = $stmt->fetchAll();
               </div>
             <?php endif; ?>
           </div>
+
           <div class="project-image">
-            <img src="<?= htmlspecialchars($project['image_url']) ?>"
-                 alt="<?= htmlspecialchars($project['title']) ?>"
-                 onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+            <?php if ($isVideo): ?>
+              <video controls style="width:100%;height:100%;object-fit:cover;">
+                <source src="<?= $mediaUrl ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
+                Seu navegador não suporta vídeo.
+              </video>
+            <?php else: ?>
+              <img src="<?= $mediaUrl ?>"
+                   alt="<?= htmlspecialchars($project['title']) ?>"
+                   onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+            <?php endif; ?>
           </div>
+
           <div class="project-description">
             <?= nl2br(htmlspecialchars($project['description'])) ?>
           </div>
@@ -126,7 +140,7 @@ $projects = $stmt->fetchAll();
     <?php if (!isLoggedIn()): ?>
       <p>Você precisa estar logado para criar um projeto.</p>
     <?php else: ?>
-      <form id="postForm" method="post" action="create_project.php">
+      <form id="postForm" method="post" action="create_project.php" enctype="multipart/form-data">
         <div class="input-group">
           <input type="text" id="postTitle" name="title" placeholder=" " required>
           <label>Título do Projeto</label>
@@ -136,8 +150,15 @@ $projects = $stmt->fetchAll();
           <label>Localização (ex: São Paulo, SP)</label>
         </div>
         <div class="input-group">
-          <input type="url" id="postImage" name="image_url" placeholder=" " required>
-          <label>URL da Imagem</label>
+          <input type="url" id="postImage" name="image_url" placeholder=" ">
+          <label>URL de Imagem/Vídeo (opcional se usar upload)</label>
+        </div>
+        <div class="upload-row">
+          <input type="file" id="mediaFile" name="media_file" accept="image/*,video/*" hidden>
+          <button type="button" class="upload-btn" onclick="document.getElementById('mediaFile').click()">
+            📁 Enviar imagem/vídeo
+          </button>
+          <span id="uploadFileName" class="upload-file-name"></span>
         </div>
         <div class="input-group">
           <textarea id="postDescription" name="description" placeholder=" " required></textarea>
@@ -222,7 +243,6 @@ $projects = $stmt->fetchAll();
 <?php if (isset($_GET['login'])): ?>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Abre o modal de autenticação já na aba de login
     openAuthModal();
     showLogin();
   });

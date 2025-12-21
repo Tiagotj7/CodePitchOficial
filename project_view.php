@@ -19,7 +19,6 @@ try {
     $stmt->execute(array($id));
     $project = $stmt->fetch();
 } catch (PDOException $e) {
-    // Loga o erro no servidor (error_log)
     error_log('ERRO PROJECT_VIEW SELECT PROJECT: ' . $e->getMessage());
     die('Erro ao carregar projeto.');
 }
@@ -43,6 +42,10 @@ try {
     error_log('ERRO PROJECT_VIEW SELECT COMMENTS: ' . $e->getMessage());
     $comments = array();
 }
+
+$mediaUrl = htmlspecialchars($project['image_url']);
+$ext = strtolower(pathinfo($project['image_url'], PATHINFO_EXTENSION));
+$isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -92,9 +95,16 @@ try {
       </div>
 
       <div class="project-image">
-        <img src="<?= htmlspecialchars($project['image_url']) ?>"
-             alt="<?= htmlspecialchars($project['title']) ?>"
-             onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+        <?php if ($isVideo): ?>
+          <video controls style="width:100%;height:100%;object-fit:cover;">
+            <source src="<?= $mediaUrl ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
+            Seu navegador não suporta vídeo.
+          </video>
+        <?php else: ?>
+          <img src="<?= $mediaUrl ?>"
+               alt="<?= htmlspecialchars($project['title']) ?>"
+               onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+        <?php endif; ?>
       </div>
 
       <div class="project-description">

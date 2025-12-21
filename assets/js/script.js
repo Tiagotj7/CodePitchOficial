@@ -149,3 +149,19 @@ window.showLogin = showLogin;
 window.openCreatePostModal = openCreatePostModal;
 window.closeCreatePostModal = closeCreatePostModal;
 window.toggleUserMenu = toggleUserMenu;
+
+// Mostrar nome do arquivo selecionado no upload
+document.addEventListener('DOMContentLoaded', () => {
+  const fileInput = document.getElementById('mediaFile');
+  const fileNameSpan = document.getElementById('uploadFileName');
+
+  if (fileInput && fileNameSpan) {
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        fileNameSpan.textContent = fileInput.files[0].name;
+      } else {
+        fileNameSpan.textContent = '';
+      }
+    });
+  }
+});

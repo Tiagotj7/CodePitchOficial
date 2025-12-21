@@ -43,6 +43,11 @@ $projects = $stmt->fetchAll();
         <p class="no-projects">Nenhum projeto encontrado.</p>
       <?php else: ?>
         <?php foreach ($projects as $project): ?>
+          <?php
+            $mediaUrl = htmlspecialchars($project['image_url']);
+            $ext = strtolower(pathinfo($project['image_url'], PATHINFO_EXTENSION));
+            $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
+          ?>
           <div class="project-card">
             <div class="project-header">
               <div class="project-avatar">
@@ -62,11 +67,20 @@ $projects = $stmt->fetchAll();
                 </div>
               <?php endif; ?>
             </div>
+
             <div class="project-image">
-              <img src="<?= htmlspecialchars($project['image_url']) ?>"
-                   alt="<?= htmlspecialchars($project['title']) ?>"
-                   onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+              <?php if ($isVideo): ?>
+                <video controls style="width:100%;height:100%;object-fit:cover;">
+                  <source src="<?= $mediaUrl ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
+                  Seu navegador não suporta vídeo.
+                </video>
+              <?php else: ?>
+                <img src="<?= $mediaUrl ?>"
+                     alt="<?= htmlspecialchars($project['title']) ?>"
+                     onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+              <?php endif; ?>
             </div>
+
             <div class="project-description">
               <?= nl2br(htmlspecialchars($project['description'])) ?>
             </div>

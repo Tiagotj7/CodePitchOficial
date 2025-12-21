@@ -844,3 +844,40 @@ header.scrolled {
   animation: slideInLeft 0.8s ease forwards;
   animation-delay: calc(var(--i) * 0.1s);
 }
+
+/* ================= UPLOAD DE MÍDIA ================= */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: -0.5rem 0 1.5rem 0; /* aproxima do campo de URL */
+}
+
+.upload-btn {
+  background-color: #21262d;
+  color: #c9d1d9;
+  border: 1px dashed #30363d;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background-color: #30363d;
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+.upload-file-name {
+  font-size: 0.85rem;
+  color: #8b949e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
