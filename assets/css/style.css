@@ -871,7 +871,7 @@ header.scrolled {
   .forms-container {
     width: 100%;
     max-width: 420px;
-    min-height: 480px;              /* altura mínima menor pro mobile */
+    min-height: 520px;              /* altura mínima menor pro mobile */
     max-height: calc(100vh - 3rem); /* não passa muito da tela */
     border-radius: 12px;
   }
@@ -884,6 +884,11 @@ header.scrolled {
   .welcome-box {
     width: 100%;
     padding: 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   /* centraliza verticalmente */
+    align-items: center;       /* centraliza horizontalmente */
+    flex: 1; 
   }
 
   .welcome-box h2 {
@@ -1089,7 +1094,7 @@ header.scrolled {
 
   .forms-container {
     max-width: 100%;
-    min-height: 460px;               /* um pouco menor em telas bem estreitas */
+    min-height: 480px;               /* um pouco menor em telas bem estreitas */
     margin: 0 0.5rem;
     max-height: calc(100vh - 2.5rem);
   }
