@@ -10,17 +10,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = isset($_POST['description']) ? trim($_POST['description']) : '';
     $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
-    $maxFiles = 5;
+    $maxFiles   = 5;
     $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'mov');
     $uploadLimit = ini_get('upload_max_filesize'); // ex: "10M"
 
     // ====== LISTA DE MÍDIAS (URL + UPLOADS) ======
-    $media = array();
-    $uploadErrors = array();
+    $media          = array();
+    $uploadErrors   = array();
+    $uploadFeedback = array(); // para mostrar ✅ / ❌ por arquivo
 
     // 1) Se o usuário informou uma URL, já entra como primeira mídia
     if ($urlMedia !== '') {
         $media[] = $urlMedia;
+        $uploadFeedback[] = array(
+            'name'   => $urlMedia,
+            'status' => 'url',
+            'msg'    => 'URL adicionada como mídia principal.'
+        );
     }
 
     // 2) Processar uploads múltiplos (até 5 no total contando a URL)
@@ -40,17 +46,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Algum erro de upload
             if ($error !== UPLOAD_ERR_OK) {
-                // Erro de tamanho excedido
                 if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE) {
-                    $uploadErrors[] = "O arquivo \"{$name}\" é maior que o limite permitido ({$uploadLimit}).";
+                    $msg = "O arquivo \"{$name}\" é maior que o limite permitido ({$uploadLimit}).";
+                    $uploadErrors[] = $msg;
+                    $uploadFeedback[] = array(
+                        'name'   => $name,
+                        'status' => 'too_big',
+                        'msg'    => $msg,
+                    );
                 } else {
-                    $uploadErrors[] = "Falha ao enviar o arquivo \"{$name}\" (código de erro {$error}).";
+                    $msg = "Falha ao enviar o arquivo \"{$name}\" (código de erro {$error}).";
+                    $uploadErrors[] = $msg;
+                    $uploadFeedback[] = array(
+                        'name'   => $name,
+                        'status' => 'error',
+                        'msg'    => $msg,
+                    );
                 }
                 continue;
             }
 
             // Se já temos 5 mídias, para
             if (count($media) >= $maxFiles) {
+                $msg = "Você tentou enviar mais de {$maxFiles} arquivos. Arquivo \"{$name}\" foi ignorado.";
+                $uploadErrors[] = $msg;
+                $uploadFeedback[] = array(
+                    'name'   => $name,
+                    'status' => 'ignored',
+                    'msg'    => $msg,
+                );
                 break;
             }
 
@@ -58,7 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
 
             if (!in_array($ext, $allowedExt)) {
-                $uploadErrors[] = "O arquivo \"{$origName}\" possui extensão não permitida.";
+                $msg = "O arquivo \"{$origName}\" possui extensão não permitida.";
+                $uploadErrors[] = $msg;
+                $uploadFeedback[] = array(
+                    'name'   => $origName,
+                    'status' => 'error',
+                    'msg'    => $msg,
+                );
                 continue;
             }
 
@@ -73,9 +103,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dest    = $uploadDir . $newName;
 
             if (move_uploaded_file($tmp[$i], $dest)) {
-                $media[] = $publicDir . $newName;
+                $path = $publicDir . $newName;
+                $media[] = $path;
+
+                $uploadFeedback[] = array(
+                    'name'   => $origName,
+                    'status' => 'ok',
+                    'msg'    => 'Arquivo enviado com sucesso.',
+                );
             } else {
-                $uploadErrors[] = "Não foi possível salvar o arquivo \"{$origName}\" no servidor.";
+                $msg = "Não foi possível salvar o arquivo \"{$origName}\" no servidor.";
+                $uploadErrors[] = $msg;
+                $uploadFeedback[] = array(
+                    'name'   => $origName,
+                    'status' => 'error',
+                    'msg'    => $msg,
+                );
             }
         }
     }
@@ -90,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Nenhuma mídia válida (nem URL, nem upload OK)
     if (count($media) === 0) {
         if (!empty($uploadErrors)) {
-            // Erros de upload (tamanho, tipo, etc)
             $errorMsg = implode(' ', $uploadErrors);
         } else {
             $errorMsg = $errorMsg ?: "Informe pelo menos uma imagem ou vídeo (URL ou upload).";
@@ -103,8 +145,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($errorMsg !== '') {
-        // Guarda a mensagem em sessão para exibir na index (ou você pode tratar por GET)
-        $_SESSION['post_error_msg'] = $errorMsg;
+        // Guarda mensagens em sessão para exibir na index
+        $_SESSION['post_error_msg']  = $errorMsg;
+        $_SESSION['upload_feedback'] = $uploadFeedback;
+        $_SESSION['max_upload_size'] = $uploadLimit;
+
         header("Location: index.php?post_error=1");
         exit;
     }
@@ -126,6 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description,
         $tags
     ));
+
+    // Limpa qualquer feedback antigo de sessão para não reaparecer
+    unset($_SESSION['post_error_msg'], $_SESSION['upload_feedback'], $_SESSION['max_upload_size']);
 
     header("Location: index.php?post_success=1");
     exit;
