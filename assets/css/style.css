@@ -566,6 +566,7 @@ header.scrolled {
   position: relative;
   width: 900px;
   max-width: 100%;
+  min-height: 520px;              /* <--- ESSENCIAL: garante altura visível */
   max-height: 90vh;
   background: linear-gradient(45deg, #161b22, #0d1117);
   border-radius: 20px;
@@ -764,10 +765,8 @@ header.scrolled {
   .forms-container {
     width: 100%;
     max-width: 420px;
-    /* largura máxima confortável em pé */
-    height: auto;
-    max-height: calc(100vh - 3rem);
-    /* deixa um respiro nas bordas */
+    min-height: 480px;              /* altura mínima menor pro mobile */
+    max-height: calc(100vh - 3rem); /* não passa muito da tela */
     border-radius: 12px;
   }
 
@@ -984,6 +983,7 @@ header.scrolled {
 
   .forms-container {
     max-width: 100%;
+    min-height: 460px;               /* um pouco menor em telas bem estreitas */
     margin: 0 0.5rem;
     max-height: calc(100vh - 2.5rem);
   }
