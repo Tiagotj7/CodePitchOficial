@@ -150,17 +150,31 @@ window.openCreatePostModal = openCreatePostModal;
 window.closeCreatePostModal = closeCreatePostModal;
 window.toggleUserMenu = toggleUserMenu;
 
-// Mostrar nome do arquivo selecionado no upload
+// Mostrar nome dos arquivos selecionados e limitar a 5
 document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('mediaFile');
   const fileNameSpan = document.getElementById('uploadFileName');
 
   if (fileInput && fileNameSpan) {
     fileInput.addEventListener('change', () => {
-      if (fileInput.files && fileInput.files.length > 0) {
-        fileNameSpan.textContent = fileInput.files[0].name;
-      } else {
+      const files = fileInput.files;
+
+      if (!files || files.length === 0) {
         fileNameSpan.textContent = '';
+        return;
+      }
+
+      if (files.length > 5) {
+        alert('Você pode enviar no máximo 5 arquivos (imagens ou vídeos) por projeto.');
+        fileInput.value = '';
+        fileNameSpan.textContent = '';
+        return;
+      }
+
+      if (files.length === 1) {
+        fileNameSpan.textContent = files[0].name;
+      } else {
+        fileNameSpan.textContent = `${files.length} arquivos selecionados`;
       }
     });
   }

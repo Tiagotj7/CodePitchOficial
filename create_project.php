@@ -6,60 +6,86 @@ requireLogin();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title       = isset($_POST['title']) ? trim($_POST['title']) : '';
     $location    = isset($_POST['location']) ? trim($_POST['location']) : '';
-    $image_url   = isset($_POST['image_url']) ? trim($_POST['image_url']) : '';
+    $urlMedia    = isset($_POST['image_url']) ? trim($_POST['image_url']) : '';
     $description = isset($_POST['description']) ? trim($_POST['description']) : '';
     $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
-    // ====== TRATAR UPLOAD DE IMAGEM/VÍDEO ======
-    $uploadedPath = '';
+    // ====== LISTA DE MÍDIAS (URL + UPLOADS) ======
+    $media = array();
 
-    if (isset($_FILES['media_file']) && $_FILES['media_file']['error'] === UPLOAD_ERR_OK) {
-        $tmpName = $_FILES['media_file']['tmp_name'];
-        $origName = basename($_FILES['media_file']['name']);
-        $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+    // 1) Se o usuário informou uma URL, já entra como primeira mídia
+    if ($urlMedia !== '') {
+        $media[] = $urlMedia;
+    }
 
-        // Tipos permitidos
-        $allowed = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'mov');
+    // 2) Processar uploads múltiplos (até 5 no total contando a URL)
+    if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
+        $names  = $_FILES['media_files']['name'];
+        $tmp    = $_FILES['media_files']['tmp_name'];
+        $errors = $_FILES['media_files']['error'];
 
-        if (in_array($ext, $allowed)) {
+        $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'mov');
+
+        for ($i = 0; $i < count($names); $i++) {
+            if ($errors[$i] !== UPLOAD_ERR_OK || $names[$i] === '') {
+                continue;
+            }
+
+            // Se já tiver 5 mídias, para
+            if (count($media) >= 5) {
+                break;
+            }
+
+            $origName = basename($names[$i]);
+            $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+
+            if (!in_array($ext, $allowedExt)) {
+                continue;
+            }
+
             $uploadDir = __DIR__ . '/uploads/';
             $publicDir = 'uploads/';
 
-            // Garante que a pasta exista
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
             $newName = uniqid('media_', true) . '.' . $ext;
-            $dest = $uploadDir . $newName;
+            $dest    = $uploadDir . $newName;
 
-            if (move_uploaded_file($tmpName, $dest)) {
-                $uploadedPath = $publicDir . $newName; // caminho usado na aplicação
+            if (move_uploaded_file($tmp[$i], $dest)) {
+                $media[] = $publicDir . $newName;
             }
         }
     }
 
-    // Se fez upload com sucesso, usa o caminho do upload
-    if ($uploadedPath !== '') {
-        $image_url = $uploadedPath;
-    }
-
     // ====== VALIDAÇÃO ======
-    // Exigir pelo menos UM: URL OU upload (ou os dois)
-    if ($title === '' || $location === '' || $description === '' || $tags === '' || $image_url === '') {
+    // Pelo menos uma mídia (URL ou upload)
+    if ($title === '' || $location === '' || $description === '' || $tags === '' || count($media) === 0) {
         header("Location: index.php?post_error=1");
         exit;
     }
 
+    // Limite de 5 mídias
+    if (count($media) > 5) {
+        header("Location: index.php?post_error=max_files");
+        exit;
+    }
+
+    // Define a mídia principal (primeiro item) e JSON com todas
+    $mainMedia  = $media[0];
+    $mediaJson  = json_encode($media);
+
     $stmt = $pdo->prepare("
-        INSERT INTO projects (user_id, title, location, image_url, description, tags)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO projects (user_id, title, location, image_url, media_json, description, tags)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute(array(
         currentUserId(),
         $title,
         $location,
-        $image_url,
+        $mainMedia,
+        $mediaJson,
         $description,
         $tags
     ));

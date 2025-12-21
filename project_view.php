@@ -27,6 +27,28 @@ if (!$project) {
     die("Projeto não encontrado ou desativado.");
 }
 
+// ===== MÍDIAS DO PROJETO =====
+$mediaList = array();
+if (!empty($project['media_json'])) {
+    $decoded = json_decode($project['media_json'], true);
+    if (is_array($decoded)) {
+        $mediaList = $decoded;
+    }
+}
+
+// Fallback se media_json estiver vazio
+if (empty($mediaList) && !empty($project['image_url'])) {
+    $mediaList = array($project['image_url']);
+}
+
+// Garante no máximo 5 mídias
+$mediaList = array_slice($mediaList, 0, 5);
+
+// Mídia principal (primeira)
+$mainMedia = !empty($mediaList) ? $mediaList[0] : '';
+$mainExt   = strtolower(pathinfo($mainMedia, PATHINFO_EXTENSION));
+$mainIsVideo = in_array($mainExt, array('mp4', 'webm', 'ogg', 'mov'));
+
 // ===== BUSCA COMENTÁRIOS ATIVOS =====
 try {
     $stmt = $pdo->prepare("
@@ -42,10 +64,6 @@ try {
     error_log('ERRO PROJECT_VIEW SELECT COMMENTS: ' . $e->getMessage());
     $comments = array();
 }
-
-$mediaUrl = htmlspecialchars($project['image_url']);
-$ext = strtolower(pathinfo($project['image_url'], PATHINFO_EXTENSION));
-$isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -94,20 +112,45 @@ $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
         <?php endif; ?>
       </div>
 
-      <div class="project-image">
-        <?php if ($isVideo): ?>
-          <video controls style="width:100%;height:100%;object-fit:cover;">
-            <source src="<?= $mediaUrl ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
-            Seu navegador não suporta vídeo.
-          </video>
-        <?php else: ?>
-          <img src="<?= $mediaUrl ?>"
-               alt="<?= htmlspecialchars($project['title']) ?>"
-               onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
-        <?php endif; ?>
-      </div>
+      <?php if (!empty($mainMedia)): ?>
+        <div class="project-image">
+          <?php if ($mainIsVideo): ?>
+            <video controls style="width:100%;height:100%;object-fit:cover;">
+              <source src="<?= htmlspecialchars($mainMedia) ?>" type="video/<?= $mainExt === 'ogv' ? 'ogg' : $mainExt ?>">
+              Seu navegador não suporta vídeo.
+            </video>
+          <?php else: ?>
+            <img src="<?= htmlspecialchars($mainMedia) ?>"
+                 alt="<?= htmlspecialchars($project['title']) ?>"
+                 onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
 
-      <div class="project-description">
+      <?php if (count($mediaList) > 1): ?>
+        <div class="project-media-grid">
+          <?php
+          // Começa do índice 1 porque 0 é a mídia principal
+          for ($i = 1; $i < count($mediaList); $i++):
+              $m = $mediaList[$i];
+              $ext = strtolower(pathinfo($m, PATHINFO_EXTENSION));
+              $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
+          ?>
+            <div class="project-media-item">
+              <?php if ($isVideo): ?>
+                <video controls>
+                  <source src="<?= htmlspecialchars($m) ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
+                </video>
+              <?php else: ?>
+                <img src="<?= htmlspecialchars($m) ?>" alt="Mídia do projeto"
+                     onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
+              <?php endif; ?>
+            </div>
+          <?php endfor; ?>
+        </div>
+      <?php endif; ?>
+
+      <div class="project-description" style="margin-top:1rem;">
         <?= nl2br(htmlspecialchars($project['description'])) ?>
       </div>
 
