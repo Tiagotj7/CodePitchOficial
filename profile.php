@@ -63,7 +63,7 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
 
 <?php include 'header_partial.php'; ?>
 
-<main class="container">
+<main class="page-main">
   <section class="profile-section">
     <div class="profile-header-card">
       <div class="profile-avatar">

@@ -89,7 +89,7 @@ try {
 
   <?php include 'header_partial.php'; ?>
 
-  <main class="container">
+  <main class="page-main">
     <section class="projects-section">
       <h2><?= htmlspecialchars($project['title']) ?></h2>
 

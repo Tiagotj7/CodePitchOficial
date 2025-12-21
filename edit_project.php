@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include 'header_partial.php'; ?>
 
-<main class="container">
+<main class="page-main">
   <section class="projects-section">
     <h2>Editar Projeto</h2>
 

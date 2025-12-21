@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include 'header_partial.php'; ?>
 
-<main class="container">
+<main class="page-main">
   <section class="profile-section">
     <h2>Editar Perfil</h2>
 

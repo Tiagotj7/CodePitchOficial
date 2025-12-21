@@ -37,7 +37,7 @@ $projects = $stmt->fetchAll();
 
   <?php include 'header_partial.php'; ?>
 
-  <main class="container">
+  <main class="page-main">
     <section class="projects-section">
       <h2>Projetos em Destaque</h2>
       <div class="projects-grid" id="projectsGrid">
