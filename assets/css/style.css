@@ -763,8 +763,10 @@ header.scrolled {
 .page-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 120px 2rem 2rem;
-  /* top 120px por causa do header fixo */
+  padding-top: 120px;
+  /* espaço por causa do header fixo */
+  padding-bottom: 2rem;
+  /* sem padding-left/right: quem cuida disso é .projects-section / .profile-section */
 }
 
 /* ================= RESPONSIVIDADE 768px ================= */
@@ -778,7 +780,9 @@ header.scrolled {
 
   .page-main {
     max-width: 100%;
-    padding: 120px 1rem 2rem;
+    padding-top: 120px;
+    padding-bottom: 2rem;
+    /* sem padding-left/right aqui também */
   }
 
   .navbar {
@@ -994,9 +998,9 @@ header.scrolled {
   .page-main {
     max-width: 100%;
     padding-top: 130px;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    /* igual ao index */
     padding-bottom: 2rem;
+    /* sem left/right aqui também */
   }
 
   .navbar {
@@ -1212,25 +1216,6 @@ header.scrolled {
 .welcome-box .btn {
   width: 100%;
   text-align: center;
-}
-
-/* ================= UNIFICAR LAYOUT DAS OUTRAS PÁGINAS NO MOBILE ================= */
-/* Faz qualquer <main> ter a mesma "coluna" do index em telas tipo 412x915 */
-@media (max-width: 430px) {
-
-  /* Garante coluna central em TODAS as páginas que usam <main> */
-  main {
-    max-width: 420px;
-    margin: 0 auto;
-  }
-
-  /* Ajusta o espaçamento do conteúdo principal das páginas sem hero */
-  main .projects-section,
-  main .profile-section {
-    margin-top: 1.5rem;
-    padding-left: 0;
-    padding-right: 0;
-  }
 }
 
 /* ================= UPLOAD DE MÍDIA ================= */
