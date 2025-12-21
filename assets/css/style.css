@@ -726,10 +726,23 @@ header.scrolled {
   padding: 100px 2rem 2rem;
 }
 
-/* ================= RESPONSIVIDADE ================= */
+/* ================= RESPONSIVIDADE 768px ================= */
+
 @media (max-width: 768px) {
+  /* HEADER / NAVBAR */
+  header {
+    padding: 0.75rem 1rem;
+  }
+
   .navbar {
     flex-wrap: wrap;
+  }
+
+  .navbar h1 {
+    order: 1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
   }
 
   .nav-links {
@@ -738,37 +751,97 @@ header.scrolled {
     order: 2;
     width: 100%;
     justify-content: center;
-    margin: 1rem 0;
+    margin: 0.25rem 0 0.5rem 0;
+    gap: 1.25rem;
   }
 
   .user-actions {
     order: 3;
     width: 100%;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 0.3rem;
   }
 
-  .navbar h1 {
-    order: 1;
-    width: 100%;
-    text-align: center;
+  .cta-button {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  /* CONTAINER GERAL */
+  .container {
+    padding-top: 80px;
+    max-width: 100%;
+    padding: 90px 1rem 2rem;
+  }
+
+  .projects-section {
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 0 0.5rem;
+  }
+
+  /* HERO / CARROSSEL */
+  .hero {
+    padding: 80px 1.5rem 2.5rem;
   }
 
   .hero h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
-  .projects-grid {
-    grid-template-columns: 1fr;
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .carousel-container {
+    margin: 1.5rem 1rem;
+  }
+
+  .carousel-slide {
+    padding: 1.5rem 1.25rem;
   }
 
   .carousel-slide h3 {
     font-size: 1.2rem;
   }
 
+  /* GRID DE PROJETOS */
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    padding: 1rem;
+  }
+
+  .project-image {
+    height: auto;
+    max-height: 230px;
+  }
+
+  /* MODAIS (CRIAR POST / LOGIN) */
+  .modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 1.5rem;
+    max-height: 80vh;
+  }
+
+  .auth-modal .modal-content {
+    max-height: none; /* auth-modal não usa modal-content padrão */
+  }
+
+  .auth-container {
+    align-items: flex-start;
+    padding-top: 4rem;
+  }
+
   .forms-container {
-    width: 90%;
-    height: 500px;
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 0;
   }
 
   .form-section {
@@ -778,7 +851,7 @@ header.scrolled {
   .form-box,
   .welcome-box {
     width: 100%;
-    padding: 2rem;
+    padding: 1.75rem 1.5rem;
   }
 
   .welcome-box h2 {
@@ -788,63 +861,120 @@ header.scrolled {
   .form-title {
     font-size: 1.5rem;
   }
-}
 
-/* ================= ANIMAÇÕES ================= */
-.animation {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideUp 0.6s ease forwards;
-  animation-delay: calc(var(--i) * 0.1s);
-}
+  /* PERFIL */
+  .profile-section {
+    max-width: 100%;
+    padding: 0 0.5rem 2rem;
+  }
 
-@keyframes slideUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .profile-header-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-avatar {
+    margin: 0 auto 1rem auto;
+  }
+
+  .profile-info {
+    width: 100%;
+  }
+
+  .profile-social {
+    justify-content: center;
+  }
+
+  .profile-form {
+    max-width: 100%;
+  }
+
+  /* GALERIA DE MÍDIA */
+  .project-media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-media-item img,
+  .project-media-item video {
+    max-height: 110px;
+  }
+
+  /* BOTÕES */
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn.secondary {
+    width: auto;
+    margin-top: 0.5rem;
   }
 }
 
-.form-box .animation {
-  opacity: 0;
-  transform: translateX(-50px);
-  animation: slideInLeft 0.8s ease forwards;
-  animation-delay: calc(var(--i) * 0.1s);
-}
+/* ================= RESPONSIVIDADE 480px ================= */
 
-.register-section .form-box .animation {
-  opacity: 0;
-  transform: translateX(50px);
-  animation: slideInRight 0.8s ease forwards;
-  animation-delay: calc(var(--i) * 0.1s);
-}
-
-@keyframes slideInLeft {
-  to {
-    opacity: 1;
-    transform: translateX(0);
+@media (max-width: 480px) {
+  .hero {
+    padding: 80px 1rem 2rem;
   }
-}
 
-@keyframes slideInRight {
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  .hero h2 {
+    font-size: 1.6rem;
   }
-}
 
-.welcome-box .animation {
-  opacity: 0;
-  transform: translateX(50px);
-  animation: slideInRight 0.8s ease forwards;
-  animation-delay: calc(var(--i) * 0.1s);
-}
+  .hero p {
+    font-size: 0.95rem;
+  }
 
-.register-section .welcome-box .animation {
-  opacity: 0;
-  transform: translateX(-50px);
-  animation: slideInLeft 0.8s ease forwards;
-  animation-delay: calc(var(--i) * 0.1s);
+  .navbar h1 {
+    font-size: 1.4rem;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+  }
+
+  .project-card {
+    padding: 0.9rem;
+  }
+
+  .project-description {
+    font-size: 0.9rem;
+  }
+
+  .project-tags .tag {
+    font-size: 0.75rem;
+  }
+
+  .profile-header-card {
+    padding: 1.25rem;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8rem;
+  }
+
+  .profile-info h2 {
+    font-size: 1.4rem;
+  }
+
+  .profile-email,
+  .profile-meta {
+    font-size: 0.8rem;
+  }
+
+  .social-link {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.55rem;
+  }
+
+  .modal-content {
+    padding: 1.25rem;
+    margin-top: 15%;
+  }
 }
 
 /* ================= UPLOAD DE MÍDIA ================= */
