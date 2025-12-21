@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tmp    = $_FILES['media_files']['tmp_name'];
         $errors = $_FILES['media_files']['error'];
 
-        $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'mov');
+        $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
 
         for ($i = 0; $i < count($names); $i++) {
             if ($errors[$i] !== UPLOAD_ERR_OK || $names[$i] === '') {
