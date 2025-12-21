@@ -1043,7 +1043,7 @@ header.scrolled {
 
   /* CARROSSEL (index) */
   .carousel-container {
-    margin: 1rem 0.75rem;
+    margin: 0;
   }
 
   .carousel-slide {
