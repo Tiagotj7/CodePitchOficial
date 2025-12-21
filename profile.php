@@ -91,7 +91,7 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
             <a href="<?= htmlspecialchars($userProfile['linkedin']) ?>" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
           <?php endif; ?>
           <?php if (!empty($userProfile['instagram'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['instagram']) ?>" target="_blank" rel="noopener" class="social-link">instagram</a>
+            <a href="<?= htmlspecialchars($userProfile['instagram']) ?>" target="_blank" rel="noopener" class="social-link">Instagram</a>
           <?php endif; ?>
           <?php if (!empty($userProfile['website'])): ?>
             <a href="<?= htmlspecialchars($userProfile['website']) ?>" target="_blank" rel="noopener" class="social-link">Site</a>

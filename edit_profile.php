@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="input-group">
         <input type="url" name="instagram" value="<?= htmlspecialchars($userProfile['instagram']) ?>" placeholder=" ">
-        <label>instagram / X (URL)</label>
+        <label>Instagram / X (URL)</label>
       </div>
       <div class="input-group">
         <input type="url" name="website" value="<?= htmlspecialchars($userProfile['website']) ?>" placeholder=" ">
