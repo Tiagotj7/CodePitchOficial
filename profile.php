@@ -10,41 +10,60 @@ if (isset($_GET['id'])) {
 }
 
 if (!$profileId) {
+    // Ninguém logado e sem id → volta para home
     header("Location: index.php");
     exit;
 }
 
-// Busca usuário
-$stmt = $pdo->prepare("
-    SELECT id, name, email, status, is_admin, bio, github, linkedin, twitter, website, created_at
-    FROM users
-    WHERE id = ? AND status = 1
-");
-$stmt->execute(array($profileId));
-$userProfile = $stmt->fetch();
-
-if (!$userProfile) {
-    die("Usuário não encontrado ou desativado.");
+// ===== BUSCA USUÁRIO (SELECT * PARA EVITAR PROBLEMAS COM COLUNAS) =====
+try {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$profileId]);
+    $userProfile = $stmt->fetch();
+} catch (PDOException $e) {
+    error_log('ERRO PROFILE SELECT USER: ' . $e->getMessage());
+    die("Erro ao carregar perfil de usuário.");
 }
 
-// Busca projetos do usuário
-$stmt = $pdo->prepare("
-    SELECT p.*, u.name AS author_name
-    FROM projects p
-    JOIN users u ON u.id = p.user_id
-    WHERE p.user_id = ? AND p.status = 1
-    ORDER BY p.created_at DESC
-");
-$stmt->execute(array($profileId));
-$userProjects = $stmt->fetchAll();
+if (!$userProfile) {
+    die("Usuário não encontrado.");
+}
 
-$isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
+// Campos com fallback seguro
+$userId     = (int)$userProfile['id'];
+$userName   = $userProfile['name']   ?? 'Usuário';
+$userEmail  = $userProfile['email']  ?? '';
+$isAdminDb  = isset($userProfile['is_admin']) ? (int)$userProfile['is_admin'] : 0;
+$bio        = $userProfile['bio']    ?? '';
+$github     = $userProfile['github'] ?? '';
+$linkedin   = $userProfile['linkedin'] ?? '';
+$twitter    = $userProfile['twitter'] ?? '';
+$website    = $userProfile['website'] ?? '';
+$createdAt  = $userProfile['created_at'] ?? null;
+
+$isOwnProfile = isLoggedIn() && currentUserId() === $userId;
+
+// ===== BUSCA PROJETOS DO USUÁRIO =====
+try {
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.name AS author_name
+        FROM projects p
+        JOIN users u ON u.id = p.user_id
+        WHERE p.user_id = ? AND p.status = 1
+        ORDER BY p.created_at DESC
+    ");
+    $stmt->execute([$userId]);
+    $userProjects = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log('ERRO PROFILE SELECT PROJECTS: ' . $e->getMessage());
+    $userProjects = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Perfil de <?= htmlspecialchars($userProfile['name']) ?> - CodePitch</title>
+  <title>Perfil de <?= htmlspecialchars($userName) ?> - CodePitch</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="src/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="src/favicon-32x32.png">
@@ -66,40 +85,44 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
   <section class="profile-section">
     <div class="profile-header-card">
       <div class="profile-avatar">
-        <?= strtoupper(substr($userProfile['name'], 0, 1)) ?>
+        <?= strtoupper(substr($userName, 0, 1)) ?>
       </div>
       <div class="profile-info">
         <h2>
-          <?= htmlspecialchars($userProfile['name']) ?>
-          <?php if ((int)$userProfile['is_admin'] === 1): ?>
+          <?= htmlspecialchars($userName) ?>
+          <?php if ($isAdminDb === 1): ?>
             <span class="profile-badge-admin">ADM</span>
           <?php endif; ?>
         </h2>
-        <p class="profile-email"><?= htmlspecialchars($userProfile['email']) ?></p>
+        <?php if ($userEmail): ?>
+          <p class="profile-email"><?= htmlspecialchars($userEmail) ?></p>
+        <?php endif; ?>
         <p class="profile-bio">
-          <?= $userProfile['bio'] ? nl2br(htmlspecialchars($userProfile['bio'])) : 'Nenhuma bio adicionada ainda.' ?>
+          <?= $bio ? nl2br(htmlspecialchars($bio)) : 'Nenhuma bio adicionada ainda.' ?>
         </p>
-        <p class="profile-meta">
-          Membro desde: <?= date('d/m/Y', strtotime($userProfile['created_at'])) ?>
-        </p>
+        <?php if ($createdAt): ?>
+          <p class="profile-meta">
+            Membro desde: <?= date('d/m/Y', strtotime($createdAt)) ?>
+          </p>
+        <?php endif; ?>
         <div class="profile-social">
-          <?php if (!empty($userProfile['github'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['github']) ?>" target="_blank" rel="noopener" class="social-link">GitHub</a>
+          <?php if ($github): ?>
+            <a href="<?= htmlspecialchars($github) ?>" target="_blank" rel="noopener" class="social-link">GitHub</a>
           <?php endif; ?>
-          <?php if (!empty($userProfile['linkedin'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['linkedin']) ?>" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
+          <?php if ($linkedin): ?>
+            <a href="<?= htmlspecialchars($linkedin) ?>" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
           <?php endif; ?>
-          <?php if (!empty($userProfile['twitter'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['twitter']) ?>" target="_blank" rel="noopener" class="social-link">Twitter</a>
+          <?php if ($twitter): ?>
+            <a href="<?= htmlspecialchars($twitter) ?>" target="_blank" rel="noopener" class="social-link">Twitter</a>
           <?php endif; ?>
-          <?php if (!empty($userProfile['website'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['website']) ?>" target="_blank" rel="noopener" class="social-link">Site</a>
+          <?php if ($website): ?>
+            <a href="<?= htmlspecialchars($website) ?>" target="_blank" rel="noopener" class="social-link">Site</a>
           <?php endif; ?>
         </div>
 
         <?php if ($isOwnProfile || isAdmin()): ?>
           <div style="margin-top:0.75rem;">
-            <a href="edit_profile.php?id=<?= $userProfile['id'] ?>" class="btn" style="text-decoration:none;">
+            <a href="edit_profile.php?id=<?= $userId ?>" class="btn" style="text-decoration:none;">
               Editar Perfil
             </a>
           </div>
@@ -107,7 +130,7 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
       </div>
     </div>
 
-    <h3 style="margin-top:2rem;">Projetos de <?= htmlspecialchars($userProfile['name']) ?></h3>
+    <h3 style="margin-top:2rem;">Projetos de <?= htmlspecialchars($userName) ?></h3>
 
     <?php if (empty($userProjects)): ?>
       <p>Nenhum projeto publicado ainda.</p>
