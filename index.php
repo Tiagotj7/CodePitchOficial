@@ -47,6 +47,8 @@ $projects = $stmt->fetchAll();
   <link rel="manifest" href="src/site.webmanifest">
   <link rel="mask-icon" href="src/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="shortcut icon" href="src/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="msapplication-config" content="/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
@@ -257,7 +259,9 @@ $projects = $stmt->fetchAll();
                 ou continue com
               </p>
               <a href="google_login.php" class="google-btn">
-                <span>Login com Google</span>
+                <span>
+                  <i class="bi bi-google"></i>
+                  Login com Google</span>
               </a>
             </div>
           </div>
