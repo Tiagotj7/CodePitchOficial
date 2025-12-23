@@ -447,7 +447,6 @@ header.scrolled {
   border: 1px solid #30363d;
   border-radius: 6px;
   color: #c9d1d9;
-  resize: vertical;
   min-height: 80px;
   margin-bottom: 0.5rem;
 }
