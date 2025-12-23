@@ -1,6 +1,8 @@
 <?php
 require 'db.php';
 
-echo 'CLIENT_ID: ' . getenv('GOOGLE_CLIENT_ID') . "<br>";
-echo 'CLIENT_SECRET: ' . getenv('GOOGLE_CLIENT_SECRET') . "<br>";
-echo 'REDIRECT_URI: ' . getenv('GOOGLE_REDIRECT_URI') . "<br>";
+echo '<pre>';
+echo "GOOGLE_CLIENT_ID: "   . var_export(getenv('GOOGLE_CLIENT_ID'), true)   . PHP_EOL;
+echo "GOOGLE_CLIENT_SECRET: " . var_export(getenv('GOOGLE_CLIENT_SECRET'), true) . PHP_EOL;
+echo "GOOGLE_REDIRECT_URI: " . var_export(getenv('GOOGLE_REDIRECT_URI'), true) . PHP_EOL;
+echo '</pre>';
