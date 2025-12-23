@@ -6,6 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMediaFileLabel();
   setupDeleteMediaCheckboxes();
   setupTagInput();
+
+  // Garante que o botão "Entrar" abre o modal
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openAuthModal();
+    });
+  }
+
+  // Fecha o modal ao clicar no fundo escuro
+  const authModal = document.getElementById('authModal');
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        closeAuthModal();
+      }
+    });
+  }
 });
 
 // ================= CARROSSEL =================
@@ -49,11 +68,11 @@ function initCarousel() {
   setInterval(nextSlide, 5000);
 }
 
-// ================= MODAIS (AUTH / CRIAR POST) =================
+// ================= MODAL DE AUTENTICAÇÃO =================
 function openAuthModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
-    modal.classList.add('active');
+    modal.style.display = 'block';      // mostra o modal
     document.body.style.overflow = 'hidden';
   }
 }
@@ -61,7 +80,7 @@ function openAuthModal() {
 function closeAuthModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
-    modal.classList.remove('active');
+    modal.style.display = 'none';       // esconde o modal
     document.body.style.overflow = 'auto';
   }
 }
@@ -69,19 +88,19 @@ function closeAuthModal() {
 function showRegister() {
   const loginSection    = document.getElementById('loginSection');
   const registerSection = document.getElementById('registerSection');
-  if (loginSection && registerSection) {
-    loginSection.classList.add('register-active');
-    registerSection.classList.add('active');
-  }
+  if (!loginSection || !registerSection) return;
+
+  loginSection.classList.add('register-active');
+  registerSection.classList.add('active');
 }
 
 function showLogin() {
   const loginSection    = document.getElementById('loginSection');
   const registerSection = document.getElementById('registerSection');
-  if (loginSection && registerSection) {
-    loginSection.classList.remove('register-active');
-    registerSection.classList.remove('active');
-  }
+  if (!loginSection || !registerSection) return;
+
+  loginSection.classList.remove('register-active');
+  registerSection.classList.remove('active');
 }
 
 function openCreatePostModal() {
