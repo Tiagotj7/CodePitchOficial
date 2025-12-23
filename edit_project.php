@@ -197,12 +197,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label>Descrição do Projeto</label>
         </div>
         <div class="tag-group">
-          <label for="tagInput">Hashtags</label>
-          <div class="tag-input" id="tagInputContainer">
-            <input type="text" id="tagInput" placeholder="Digite e pressione Enter" />
+          <label for="editTagInput">Hashtags</label>
+          <div class="tag-input">
+            <input type="text" id="editTagInput" placeholder="Digite e pressione Enter" />
           </div>
           <!-- Campo oculto que será enviado para o PHP (tag1,tag2,tag3...) -->
-          <input type="hidden" id="postTags" name="tags">
+          <input type="hidden" name="tags" value="<?= htmlspecialchars($project['tags']) ?>">
         </div>
 
         <?php if (!empty($existingMedia)): ?>
