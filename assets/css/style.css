@@ -272,6 +272,29 @@ header.scrolled {
   padding: 0 2rem;
 }
 
+/* Ajustes específicos para a página de detalhe do projeto (project_view.php) */
+.project-view-page {
+  margin-top: 3rem;    /* espaço abaixo do header */
+}
+
+/* Mobile médio */
+@media (max-width: 768px) {
+  .project-view-page {
+    margin-top: 2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Mobile estreito (ex: 375x667, 412x915) */
+@media (max-width: 430px) {
+  .project-view-page {
+    margin-top: 2rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
 .projects-section h2 {
   text-align: center;
   color: #58a6ff;
