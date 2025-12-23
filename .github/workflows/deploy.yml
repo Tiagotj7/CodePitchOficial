@@ -3,7 +3,7 @@ name: 🚀 Deploy via FTP
 on:
   push:
     branches:
-      - main   # troque para "master" se o branch principal for master
+      - main   # ou "master", conforme seu branch padrão
 
 jobs:
   ftp-deploy:
@@ -20,16 +20,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-          # PRIMEIRA TENTATIVA: usar FTP simples
           protocol: ftp
           port: 21
 
-          # Diretório local (raiz do repo)
           local-dir: ./
-
-          # Diretório no servidor
-          # Se quando você entra com o FileZilla já cai em /htdocs, mude para:
-          # server-dir: ./
           server-dir: /htdocs/
 
           exclude: |
