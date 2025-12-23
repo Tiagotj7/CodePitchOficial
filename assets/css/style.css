@@ -670,7 +670,7 @@ header.scrolled {
 /* Textarea menor por padrão */
 .input-group textarea {
   min-height: 90px;
-  resize: vertical;
+  resize: none;
 }
 
 /* Foco destaca a borda */
