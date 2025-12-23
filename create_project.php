@@ -3,6 +3,13 @@ require 'db.php';
 require 'auth.php';
 requireLogin();
 
+// Helper: verifica se URL termina com extensão de imagem permitida
+function isAllowedImageUrl($url, $allowedExt) {
+    $path = parse_url($url, PHP_URL_PATH);
+    $ext  = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    return $ext !== '' && in_array($ext, $allowedExt);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title       = isset($_POST['title']) ? trim($_POST['title']) : '';
     $location    = isset($_POST['location']) ? trim($_POST['location']) : '';
@@ -10,26 +17,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = isset($_POST['description']) ? trim($_POST['description']) : '';
     $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
-    $maxFiles   = 5;
-    $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
+    $maxFiles    = 5;
+    $allowedExt  = array('jpg', 'jpeg', 'png', 'gif', 'webp');
     $uploadLimit = ini_get('upload_max_filesize'); // ex: "10M"
 
-    // ====== LISTA DE MÍDIAS (URL + UPLOADS) ======
-    $media          = array();
+    $media          = array();   // lista de caminhos de mídias (pode ficar vazia)
     $uploadErrors   = array();
-    $uploadFeedback = array(); // para mostrar ✅ / ❌ por arquivo
+    $uploadFeedback = array();
 
-    // 1) Se o usuário informou uma URL, já entra como primeira mídia
+    // 1) URL (se for imagem válida)
     if ($urlMedia !== '') {
-        $media[] = $urlMedia;
-        $uploadFeedback[] = array(
-            'name'   => $urlMedia,
-            'status' => 'url',
-            'msg'    => 'URL adicionada como mídia principal.'
-        );
+        if (isAllowedImageUrl($urlMedia, $allowedExt)) {
+            $media[] = $urlMedia;
+            $uploadFeedback[] = array(
+                'name'   => $urlMedia,
+                'status' => 'url',
+                'msg'    => 'URL de imagem adicionada.'
+            );
+        } else {
+            $msg = "A URL informada não parece ser uma imagem válida (use .jpg, .jpeg, .png, .gif ou .webp).";
+            $uploadErrors[] = $msg;
+            $uploadFeedback[] = array(
+                'name'   => $urlMedia,
+                'status' => 'error',
+                'msg'    => $msg,
+            );
+        }
     }
 
-    // 2) Processar uploads múltiplos (até 5 no total contando a URL)
+    // 2) Upload múltiplo de IMAGENS (opcional)
     if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
         $names  = $_FILES['media_files']['name'];
         $tmp    = $_FILES['media_files']['tmp_name'];
@@ -39,15 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name  = $names[$i];
             $error = $errors[$i];
 
-            // Nenhum arquivo nesse índice
             if ($name === '' && $error === UPLOAD_ERR_NO_FILE) {
                 continue;
             }
 
-            // Algum erro de upload
             if ($error !== UPLOAD_ERR_OK) {
                 if ($error === UPLOAD_ERR_INI_SIZE || $error === UPLOAD_ERR_FORM_SIZE) {
-                    $msg = "O arquivo \"{$name}\" é maior que o limite permitido ({$uploadLimit}).";
+                    $msg = "A imagem \"{$name}\" é maior que o limite permitido ({$uploadLimit}).";
                     $uploadErrors[] = $msg;
                     $uploadFeedback[] = array(
                         'name'   => $name,
@@ -55,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'msg'    => $msg,
                     );
                 } else {
-                    $msg = "Falha ao enviar o arquivo \"{$name}\" (código de erro {$error}).";
+                    $msg = "Falha ao enviar a imagem \"{$name}\" (código de erro {$error}).";
                     $uploadErrors[] = $msg;
                     $uploadFeedback[] = array(
                         'name'   => $name,
@@ -66,9 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 continue;
             }
 
-            // Se já temos 5 mídias, para
             if (count($media) >= $maxFiles) {
-                $msg = "Você tentou enviar mais de {$maxFiles} arquivos. Arquivo \"{$name}\" foi ignorado.";
+                $msg = "Você tentou enviar mais de {$maxFiles} imagens. A imagem \"{$name}\" foi ignorada.";
                 $uploadErrors[] = $msg;
                 $uploadFeedback[] = array(
                     'name'   => $name,
@@ -82,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
 
             if (!in_array($ext, $allowedExt)) {
-                $msg = "O arquivo \"{$origName}\" possui extensão não permitida.";
+                $msg = "A imagem \"{$origName}\" possui extensão não permitida. Use apenas: " . implode(', ', $allowedExt) . ".";
                 $uploadErrors[] = $msg;
                 $uploadFeedback[] = array(
                     'name'   => $origName,
@@ -109,10 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uploadFeedback[] = array(
                     'name'   => $origName,
                     'status' => 'ok',
-                    'msg'    => 'Arquivo enviado com sucesso.',
+                    'msg'    => 'Imagem enviada com sucesso.',
                 );
             } else {
-                $msg = "Não foi possível salvar o arquivo \"{$origName}\" no servidor.";
+                $msg = "Não foi possível salvar a imagem \"{$origName}\" no servidor.";
                 $uploadErrors[] = $msg;
                 $uploadFeedback[] = array(
                     'name'   => $origName,
@@ -123,29 +136,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ====== VALIDAÇÃO ======
+    // ===== VALIDAÇÃO GERAL (sem exigir imagem) =====
     $errorMsg = '';
 
     if ($title === '' || $location === '' || $description === '' || $tags === '') {
         $errorMsg = "Preencha todos os campos obrigatórios.";
     }
 
-    // Nenhuma mídia válida (nem URL, nem upload OK)
-    if (count($media) === 0) {
-        if (!empty($uploadErrors)) {
-            $errorMsg = implode(' ', $uploadErrors);
-        } else {
-            $errorMsg = $errorMsg ?: "Informe pelo menos uma imagem ou vídeo (URL ou upload).";
-        }
-    }
-
-    // Limite de 5 mídias
     if (count($media) > $maxFiles) {
-        $errorMsg = "Você tentou enviar mais de {$maxFiles} mídias. Envie no máximo {$maxFiles}.";
+        $errorMsg = "Você tentou enviar mais de {$maxFiles} imagens. Envie no máximo {$maxFiles}.";
     }
 
     if ($errorMsg !== '') {
-        // Guarda mensagens em sessão para exibir na index
         $_SESSION['post_error_msg']  = $errorMsg;
         $_SESSION['upload_feedback'] = $uploadFeedback;
         $_SESSION['max_upload_size'] = $uploadLimit;
@@ -154,9 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Define a mídia principal (primeiro item) e JSON com todas
-    $mainMedia  = $media[0];
-    $mediaJson  = json_encode($media);
+    // Pode não haver mídia nenhuma: media pode ser []
+    $mainMedia = $media[0] ?? '';               // imagem principal ou vazio
+    $mediaJson = json_encode($media);          // [] se vazio
 
     $stmt = $pdo->prepare("
         INSERT INTO projects (user_id, title, location, image_url, media_json, description, tags)
@@ -172,7 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tags
     ));
 
-    // Limpa qualquer feedback antigo de sessão para não reaparecer
     unset($_SESSION['post_error_msg'], $_SESSION['upload_feedback'], $_SESSION['max_upload_size']);
 
     header("Location: index.php?post_success=1");

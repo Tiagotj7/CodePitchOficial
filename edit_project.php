@@ -28,9 +28,7 @@ if (empty($existingMedia) && !empty($project['image_url'])) {
     $existingMedia = array($project['image_url']);
 }
 
-// Valor exibido no campo de URL principal:
-// - se a imagem principal é um caminho interno (uploads/...), deixamos o campo em branco
-// - se é uma URL externa, mostramos ela
+// Valor exibido no campo de URL principal (não mostra uploads internos)
 $displayUrl = '';
 if (!empty($project['image_url']) && strpos($project['image_url'], 'uploads/') !== 0) {
     $displayUrl = $project['image_url'];
@@ -49,41 +47,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deleteIdx = isset($_POST['delete_media']) ? $_POST['delete_media'] : array();
     $deleteIdx = array_map('intval', (array)$deleteIdx);
 
-    // 1) Começa removendo as mídias marcadas
+    // 1) Remove mídias marcadas
     $media = array();
     foreach ($existingMedia as $idx => $path) {
         if (in_array($idx, $deleteIdx, true)) {
-            // Se for arquivo interno, tenta apagar do disco
             if (strpos($path, 'uploads/') === 0) {
                 $filePath = __DIR__ . '/' . $path;
                 if (file_exists($filePath)) {
                     @unlink($filePath);
                 }
             }
-            // Não adiciona ao array $media (removido)
         } else {
             $media[] = $path;
         }
     }
 
-    // 2) Aplica a URL manual (se enviada)
+    // 2) Aplica URL manual (se enviada)
     if ($urlMedia !== '') {
         if (empty($media)) {
             $media[] = $urlMedia;
         } else {
-            // Substitui a mídia principal pela nova URL
             $media[0] = $urlMedia;
         }
     }
-    // se a URL estiver vazia, mantemos a mídia principal atual (se existir)
 
-    // 3) Processa novos uploads (adiciona até completar 5)
+    // 3) Novos uploads (opcionais)
     if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
         $names  = $_FILES['media_files']['name'];
         $tmp    = $_FILES['media_files']['tmp_name'];
         $errors = $_FILES['media_files']['error'];
 
-        $allowedExt = array('jpg', 'jpeg', 'png', 'gif');
+        $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp');
 
         for ($i = 0; $i < count($names); $i++) {
             if ($errors[$i] !== UPLOAD_ERR_OK || $names[$i] === '') {
@@ -117,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 4) Limpeza: remove vazios, duplicados e garante no máximo 5
+    // Limpeza: remove vazios, duplicados, garante no máx 5
     $media = array_values(array_filter($media, function ($item) {
         return $item !== null && $item !== '';
     }));
@@ -127,13 +121,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Máximo de 5 mídias por projeto.";
     }
 
-    if ($title === '' || $location === '' || $description === '' || $tags === '' || count($media) === 0) {
-        $error = $error ?: "Preencha todos os campos e mantenha pelo menos uma mídia.";
+    // Agora NÃO exigimos mais mídia obrigatória: só campos de texto
+    if ($title === '' || $location === '' || $description === '' || $tags === '') {
+        $error = $error ?: "Preencha todos os campos obrigatórios.";
     }
 
     if ($error === '') {
-        $mainMedia = $media[0];
-        $mediaJson = json_encode($media);
+        $mainMedia = $media[0] ?? '';     // pode ser vazio
+        $mediaJson = json_encode($media); // [] se sem mídias
 
         $upd = $pdo->prepare("
             UPDATE projects
@@ -186,12 +181,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="input-group">
         <input type="url" name="image_url" value="<?= htmlspecialchars($displayUrl) ?>" placeholder=" ">
-        <label>URL de Imagem/Vídeo principal (opcional se usar upload)</label>
+        <label>URL de Imagem principal (opcional se usar upload)</label>
       </div>
       <div class="upload-row">
-        <input type="file" id="mediaFile" name="media_files[]" accept="image/*,video/*" hidden multiple>
+        <input type="file" id="mediaFile" name="media_files[]" accept="image/*" hidden multiple>
         <button type="button" class="upload-btn" onclick="document.getElementById('mediaFile').click()">
-          📁 Enviar novas imagens/vídeos (até 5 no total)
+          📁 Enviar novas imagens (até 5 no total)
         </button>
         <span id="uploadFileName" class="upload-file-name"></span>
       </div>
@@ -212,20 +207,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           for ($i = 0; $i < $maxPreview; $i++):
               $m = $existingMedia[$i];
               $ext = strtolower(pathinfo($m, PATHINFO_EXTENSION));
-              $isVideo = in_array($ext, array('mp4', 'webm', 'ogg', 'mov'));
               $checkboxId = 'delete-media-' . $i;
           ?>
             <div class="project-media-item">
-              <?php if ($isVideo): ?>
-                <video controls>
-                  <source src="<?= htmlspecialchars($m) ?>" type="video/<?= $ext === 'ogv' ? 'ogg' : $ext ?>">
-                </video>
-              <?php else: ?>
-                <img src="<?= htmlspecialchars($m) ?>" alt="Mídia atual"
-                     onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
-              <?php endif; ?>
+              <img src="<?= htmlspecialchars($m) ?>" alt="Mídia atual"
+                   onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
 
-              <!-- Checkbox escondido + label X -->
               <input
                 type="checkbox"
                 class="delete-media-checkbox"

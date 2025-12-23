@@ -10,14 +10,13 @@ if (isset($_GET['id'])) {
 }
 
 if (!$profileId) {
-    // ninguém logado e sem id → volta para home
     header("Location: index.php");
     exit;
 }
 
 // Busca usuário
 $stmt = $pdo->prepare("
-    SELECT id, name, email, status, is_admin, bio, github, linkedin, instagram, website, created_at
+    SELECT id, name, email, status, is_admin, bio, github, linkedin, twitter, website, created_at
     FROM users
     WHERE id = ? AND status = 1
 ");
@@ -90,8 +89,8 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
           <?php if (!empty($userProfile['linkedin'])): ?>
             <a href="<?= htmlspecialchars($userProfile['linkedin']) ?>" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
           <?php endif; ?>
-          <?php if (!empty($userProfile['instagram'])): ?>
-            <a href="<?= htmlspecialchars($userProfile['instagram']) ?>" target="_blank" rel="noopener" class="social-link">Instagram</a>
+          <?php if (!empty($userProfile['twitter'])): ?>
+            <a href="<?= htmlspecialchars($userProfile['twitter']) ?>" target="_blank" rel="noopener" class="social-link">Twitter</a>
           <?php endif; ?>
           <?php if (!empty($userProfile['website'])): ?>
             <a href="<?= htmlspecialchars($userProfile['website']) ?>" target="_blank" rel="noopener" class="social-link">Site</a>
@@ -115,7 +114,6 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
     <?php else: ?>
       <div class="projects-grid">
         <?php foreach ($userProjects as $project): ?>
-          <?php $mediaUrl = htmlspecialchars($project['image_url']); ?>
           <div class="project-card">
             <div class="project-header">
               <div class="project-avatar">
@@ -135,11 +133,14 @@ $isOwnProfile = isLoggedIn() && currentUserId() === (int)$userProfile['id'];
               <?php endif; ?>
             </div>
 
-            <div class="project-image">
-              <img src="<?= $mediaUrl ?>"
-                   alt="<?= htmlspecialchars($project['title']) ?>"
-                   onerror="this.src='https://via.placeholder.com/400x200?text=Imagem+indisponível'">
-            </div>
+            <?php if (!empty($project['image_url'])): ?>
+              <div class="project-image">
+                <img src="<?= htmlspecialchars($project['image_url']) ?>"
+                     alt="<?= htmlspecialchars($project['title']) ?>"
+                     onerror="this.src='https://via.placeholder.com/400x200?text=Sem+imagem'">
+              </div>
+            <?php endif; ?>
+
             <div class="project-description">
               <?= nl2br(htmlspecialchars($project['description'])) ?>
             </div>
