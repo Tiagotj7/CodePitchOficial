@@ -119,36 +119,37 @@ if (!$user) {
             error_log('ERRO UPDATE GOOGLE_ID: ' . $e->getMessage());
         }
     } else {
-        // Cria novo usuário
-        $randomPassword = bin2hex(random_bytes(8)); // só para preencher password_hash
-        $passwordHash   = password_hash($randomPassword, PASSWORD_DEFAULT);
-        $status         = 1;
+    // Cria novo usuário (somente colunas garantidas)
+    $randomPassword = bin2hex(random_bytes(8)); // só para preencher password_hash
+    $passwordHash   = password_hash($randomPassword, PASSWORD_DEFAULT);
+    $status         = 1;
 
-        try {
-            $ins = $pdo->prepare("
-                INSERT INTO users (name, email, password_hash, status, is_admin, bio, github, linkedin, twitter, website, google_id)
-                VALUES (?, ?, ?, ?, 0, NULL, NULL, NULL, NULL, NULL, ?)
-            ");
-            $ins->execute([
-                $name ?: explode('@', $email)[0],
-                $email,
-                $passwordHash,
-                $status,
-                $googleId
-            ]);
+    try {
+        // IMPORTANTE: use APENAS as colunas que existem na sua tabela users
+        $ins = $pdo->prepare("
+            INSERT INTO users (name, email, password_hash, status, is_admin, google_id)
+            VALUES (?, ?, ?, ?, 0, ?)
+        ");
+        $ins->execute([
+            $name ?: explode('@', $email)[0], // nome ou parte antes do @
+            $email,
+            $passwordHash,
+            $status,
+            $googleId
+        ]);
 
-            $newId = $pdo->lastInsertId();
+        $newId = $pdo->lastInsertId();
 
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-            $stmt->execute([$newId]);
-            $user = $stmt->fetch();
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$newId]);
+        $user = $stmt->fetch();
 
-        } catch (PDOException $e) {
-        // TEMPORÁRIO: mostrar erro real do banco
-        die('ERRO PDO AO CRIAR USUÁRIO GOOGLE: ' . $e->getMessage());
-        }
+    } catch (PDOException $e) {
+        // Para debug, você pode descomentar a linha abaixo temporariamente:
+        // die('ERRO PDO AO CRIAR USUÁRIO GOOGLE: ' . $e->getMessage());
+        error_log('ERRO INSERT USER FROM GOOGLE: ' . $e->getMessage());
+        die('Erro ao criar usuário com a conta Google.');
     }
-}
 
 // 4) Faz login na sessão
 if ($user) {
@@ -161,4 +162,7 @@ if ($user) {
     exit;
 }
 
-die('Não foi possível completar o login com o Google.');
+die('Não foi possível completar o login com o Google.'); 
+}
+}
+// db.php - Conexão com o banco de dados usando PDO e carregamento do .
