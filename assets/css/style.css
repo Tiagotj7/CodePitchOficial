@@ -1504,8 +1504,8 @@ textarea{
   cursor: text;
 }
 
-/* Campo de digitação das tags */
-.tag-input input#tagInput {
+/* Campo de digitação das tags (criar e editar) */
+.tag-input input[type="text"] {
   background: transparent;
   border: none;
   outline: none;
@@ -1513,6 +1513,11 @@ textarea{
   font-size: 0.9rem;
   padding: 0.3rem;
   min-width: 80px;
+}
+
+/* Placeholder mais discreto */
+.tag-input input[type="text"]::placeholder {
+  color: #8b949e;
 }
 
 /* Chip de hashtag */
