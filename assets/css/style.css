@@ -673,6 +673,10 @@ header.scrolled {
   resize: none;
 }
 
+textarea{
+    resize: none;
+}
+
 /* Foco destaca a borda */
 .input-group input:focus,
 .input-group textarea:focus {
