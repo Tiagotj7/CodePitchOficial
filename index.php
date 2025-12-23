@@ -213,13 +213,13 @@ $projects = $stmt->fetchAll();
             <textarea id="postDescription" name="description" placeholder=" " required></textarea>
             <label>Descrição do Projeto</label>
           </div>
-          <div class="input-group">
+          <div class="tag-group">
+            <label for="tagInput">Hashtags</label>
             <div class="tag-input" id="tagInputContainer">
               <input type="text" id="tagInput" placeholder="Digite e pressione Enter" />
             </div>
-            <!-- Campo real que será enviado para o PHP (tag1,tag2,tag3) -->
-            <input type="text" id="postTags" name="tags" placeholder=" " style="position:absolute;opacity:0;height:0;border:none;padding:0;margin:0;">
-            <label>Hashtags</label>
+            <!-- Campo oculto que será enviado para o PHP (tag1,tag2,tag3...) -->
+            <input type="hidden" id="postTags" name="tags">
           </div>
           <button type="submit" class="btn">Publicar Projeto</button>
         </form>
