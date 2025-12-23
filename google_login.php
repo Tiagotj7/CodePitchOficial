@@ -2,8 +2,8 @@
 require 'auth.php'; // inicia sessão
 require 'db.php';   // carrega .env e conecta no banco, se precisar depois
 
-$clientId    = getenv('GOOGLE_CLIENT_ID');
-$redirectUri = getenv('GOOGLE_REDIRECT_URI');
+$clientId    = app_env('GOOGLE_CLIENT_ID');
+$redirectUri = app_env('GOOGLE_REDIRECT_URI');
 
 if (!$clientId || !$redirectUri) {
     die('Configuração de Google OAuth ausente. Verifique o .env');

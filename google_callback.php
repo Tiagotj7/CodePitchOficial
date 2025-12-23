@@ -2,9 +2,9 @@
 require 'auth.php';
 require 'db.php';
 
-$clientId     = getenv('GOOGLE_CLIENT_ID');
-$clientSecret = getenv('GOOGLE_CLIENT_SECRET');
-$redirectUri  = getenv('GOOGLE_REDIRECT_URI');
+$clientId     = app_env('GOOGLE_CLIENT_ID');
+$clientSecret = app_env('GOOGLE_CLIENT_SECRET');
+$redirectUri  = app_env('GOOGLE_REDIRECT_URI');
 
 if (!$clientId || !$clientSecret || !$redirectUri) {
     die('Configuração de Google OAuth ausente. Verifique o .env');

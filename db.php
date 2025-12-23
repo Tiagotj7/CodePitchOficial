@@ -1,7 +1,7 @@
 <?php
 // db.php
 
-// Caminho do arquivo .env (ajuste se colocar o .env em outro lugar)
+// Caminho do arquivo .env (mesma pasta do db.php)
 $envPath = __DIR__ . '/.env';
 
 /**
@@ -40,7 +40,7 @@ function loadEnvFile($path)
 
         if ($name !== '') {
             $env[$name] = $value;
-            // Opcional: também colocar em getenv()
+            // também coloca em getenv(), se o host permitir
             putenv("$name=$value");
         }
     }
@@ -51,11 +51,29 @@ function loadEnvFile($path)
 // Carrega .env
 $env = loadEnvFile($envPath);
 
-// Lê valores do .env (ou usa default vazio se não achar)
-$host   = isset($env['DB_HOST']) ? $env['DB_HOST'] : '';
-$dbname = isset($env['DB_NAME']) ? $env['DB_NAME'] : '';
-$user   = isset($env['DB_USER']) ? $env['DB_USER'] : '';
-$pass   = isset($env['DB_PASS']) ? $env['DB_PASS'] : '';
+// Torna as variáveis do .env disponíveis globalmente
+$GLOBALS['APP_ENV'] = $env;
+
+/**
+ * Helper para acessar variáveis do .env em qualquer lugar
+ * Ex.: app_env('DB_HOST'), app_env('GOOGLE_CLIENT_ID')
+ */
+function app_env($key, $default = '')
+{
+    if (!isset($GLOBALS['APP_ENV']) || !is_array($GLOBALS['APP_ENV'])) {
+        return $default;
+    }
+
+    $env = $GLOBALS['APP_ENV'];
+
+    return array_key_exists($key, $env) ? $env[$key] : $default;
+}
+
+// Lê valores do .env para o banco de dados
+$host   = app_env('DB_HOST');
+$dbname = app_env('DB_NAME');
+$user   = app_env('DB_USER');
+$pass   = app_env('DB_PASS');
 
 if ($host === '' || $dbname === '' || $user === '') {
     die("Configuração de banco de dados inválida. Verifique o arquivo .env");
