@@ -53,7 +53,7 @@ function initCarousel() {
 function openAuthModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
-    modal.style.display = 'block';
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
 }
@@ -61,7 +61,7 @@ function openAuthModal() {
 function closeAuthModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
-    modal.style.display = 'none';
+    modal.classList.remove('active');
     document.body.style.overflow = 'auto';
   }
 }
