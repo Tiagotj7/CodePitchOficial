@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupGlobalEvents();
   setupMediaFileLabel();
   setupDeleteMediaCheckboxes();
+  setupTagInput();
 });
 
 // ================= CARROSSEL =================
@@ -195,6 +196,94 @@ function setupDeleteMediaCheckboxes() {
       }
     });
   });
+}
+
+// ================= INPUT DE HASHTAGS (CHIPS) =================
+function setupTagInput() {
+  const container = document.getElementById('tagInputContainer');
+  const input     = document.getElementById('tagInput');
+  const hidden    = document.getElementById('postTags'); // campo real enviado pro PHP
+
+  if (!container || !input || !hidden) return;
+
+  let tags = [];
+
+  // Carrega tags já existentes (caso no futuro use no editar)
+  if (hidden.value.trim() !== '') {
+    tags = hidden.value.split(',').map(t => t.trim()).filter(Boolean);
+  }
+
+  function renderTags() {
+    // Remove chips antigos
+    container.querySelectorAll('.tag-chip').forEach(chip => chip.remove());
+
+    // Cria chips novos antes do input
+    tags.forEach(tag => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = `
+        #${tag}
+        <button type="button" class="tag-remove" data-tag="${tag}">&times;</button>
+      `;
+      container.insertBefore(chip, input);
+    });
+
+    // Atualiza o campo oculto em formato tag1,tag2,tag3...
+    hidden.value = tags.join(',');
+  }
+
+  function addTag(raw) {
+    let tag = raw.replace('#', '').trim();
+    if (!tag) return;
+
+    // normalizar para evitar duplicado (#JS e #js)
+    const normalized = tag.toLowerCase();
+
+    if (tags.map(t => t.toLowerCase()).includes(normalized)) {
+      input.value = '';
+      return;
+    }
+
+    tags.push(tag);
+    input.value = '';
+    renderTags();
+  }
+
+  // Adiciona tag ao pressionar Enter ou vírgula
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(input.value);
+    } else if (e.key === 'Backspace' && input.value === '' && tags.length > 0) {
+      // Backspace com campo vazio remove a última tag
+      tags.pop();
+      renderTags();
+    }
+  });
+
+  // Adiciona tag ao sair do campo, se tiver algo digitado
+  input.addEventListener('blur', () => {
+    if (input.value.trim() !== '') {
+      addTag(input.value);
+    }
+  });
+
+  // Foco ao clicar no container
+  container.addEventListener('click', () => {
+    input.focus();
+  });
+
+  // Remover tag ao clicar no X
+  container.addEventListener('click', (e) => {
+    if (e.target.classList.contains('tag-remove')) {
+      const value = e.target.getAttribute('data-tag');
+      tags = tags.filter(t => t !== value);
+      renderTags();
+    }
+  });
+
+  // Render inicial (se já havia tags)
+  renderTags();
 }
 
 // Exporta funções pro HTML (onclick)

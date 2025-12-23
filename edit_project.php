@@ -11,228 +11,234 @@ $stmt->execute(array($id));
 $project = $stmt->fetch();
 
 if (!$project || (!isAdmin() && $project['user_id'] != currentUserId())) {
-    die("Projeto não encontrado ou sem permissão.");
+  die("Projeto não encontrado ou sem permissão.");
 }
 
 // Recupera lista de mídias atual
 $existingMedia = array();
 if (!empty($project['media_json'])) {
-    $decoded = json_decode($project['media_json'], true);
-    if (is_array($decoded)) {
-        $existingMedia = $decoded;
-    }
+  $decoded = json_decode($project['media_json'], true);
+  if (is_array($decoded)) {
+    $existingMedia = $decoded;
+  }
 }
 
 // Fallback se media_json estiver vazio
 if (empty($existingMedia) && !empty($project['image_url'])) {
-    $existingMedia = array($project['image_url']);
+  $existingMedia = array($project['image_url']);
 }
 
 // Valor exibido no campo de URL principal (não mostra uploads internos)
 $displayUrl = '';
 if (!empty($project['image_url']) && strpos($project['image_url'], 'uploads/') !== 0) {
-    $displayUrl = $project['image_url'];
+  $displayUrl = $project['image_url'];
 }
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title       = isset($_POST['title']) ? trim($_POST['title']) : '';
-    $location    = isset($_POST['location']) ? trim($_POST['location']) : '';
-    $urlMedia    = isset($_POST['image_url']) ? trim($_POST['image_url']) : '';
-    $description = isset($_POST['description']) ? trim($_POST['description']) : '';
-    $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
+  $title       = isset($_POST['title']) ? trim($_POST['title']) : '';
+  $location    = isset($_POST['location']) ? trim($_POST['location']) : '';
+  $urlMedia    = isset($_POST['image_url']) ? trim($_POST['image_url']) : '';
+  $description = isset($_POST['description']) ? trim($_POST['description']) : '';
+  $tags        = isset($_POST['tags']) ? trim($_POST['tags']) : '';
 
-    // Índices de mídias marcadas para remoção
-    $deleteIdx = isset($_POST['delete_media']) ? $_POST['delete_media'] : array();
-    $deleteIdx = array_map('intval', (array)$deleteIdx);
+  // Índices de mídias marcadas para remoção
+  $deleteIdx = isset($_POST['delete_media']) ? $_POST['delete_media'] : array();
+  $deleteIdx = array_map('intval', (array)$deleteIdx);
 
-    // 1) Remove mídias marcadas
-    $media = array();
-    foreach ($existingMedia as $idx => $path) {
-        if (in_array($idx, $deleteIdx, true)) {
-            if (strpos($path, 'uploads/') === 0) {
-                $filePath = __DIR__ . '/' . $path;
-                if (file_exists($filePath)) {
-                    @unlink($filePath);
-                }
-            }
-        } else {
-            $media[] = $path;
+  // 1) Remove mídias marcadas
+  $media = array();
+  foreach ($existingMedia as $idx => $path) {
+    if (in_array($idx, $deleteIdx, true)) {
+      if (strpos($path, 'uploads/') === 0) {
+        $filePath = __DIR__ . '/' . $path;
+        if (file_exists($filePath)) {
+          @unlink($filePath);
         }
+      }
+    } else {
+      $media[] = $path;
     }
+  }
 
-    // 2) Aplica URL manual (se enviada)
-    if ($urlMedia !== '') {
-        if (empty($media)) {
-            $media[] = $urlMedia;
-        } else {
-            $media[0] = $urlMedia;
-        }
+  // 2) Aplica URL manual (se enviada)
+  if ($urlMedia !== '') {
+    if (empty($media)) {
+      $media[] = $urlMedia;
+    } else {
+      $media[0] = $urlMedia;
     }
+  }
 
-    // 3) Novos uploads (opcionais)
-    if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
-        $names  = $_FILES['media_files']['name'];
-        $tmp    = $_FILES['media_files']['tmp_name'];
-        $errors = $_FILES['media_files']['error'];
+  // 3) Novos uploads (opcionais)
+  if (!empty($_FILES['media_files']) && is_array($_FILES['media_files']['name'])) {
+    $names  = $_FILES['media_files']['name'];
+    $tmp    = $_FILES['media_files']['tmp_name'];
+    $errors = $_FILES['media_files']['error'];
 
-        $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+    $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp');
 
-        for ($i = 0; $i < count($names); $i++) {
-            if ($errors[$i] !== UPLOAD_ERR_OK || $names[$i] === '') {
-                continue;
-            }
+    for ($i = 0; $i < count($names); $i++) {
+      if ($errors[$i] !== UPLOAD_ERR_OK || $names[$i] === '') {
+        continue;
+      }
 
-            if (count($media) >= 5) {
-                break;
-            }
+      if (count($media) >= 5) {
+        break;
+      }
 
-            $origName = basename($names[$i]);
-            $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+      $origName = basename($names[$i]);
+      $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
 
-            if (!in_array($ext, $allowedExt)) {
-                continue;
-            }
+      if (!in_array($ext, $allowedExt)) {
+        continue;
+      }
 
-            $uploadDir = __DIR__ . '/uploads/';
-            $publicDir = 'uploads/';
+      $uploadDir = __DIR__ . '/uploads/';
+      $publicDir = 'uploads/';
 
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
+      if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+      }
 
-            $newName = uniqid('media_', true) . '.' . $ext;
-            $dest    = $uploadDir . $newName;
+      $newName = uniqid('media_', true) . '.' . $ext;
+      $dest    = $uploadDir . $newName;
 
-            if (move_uploaded_file($tmp[$i], $dest)) {
-                $media[] = $publicDir . $newName;
-            }
-        }
+      if (move_uploaded_file($tmp[$i], $dest)) {
+        $media[] = $publicDir . $newName;
+      }
     }
+  }
 
-    // Limpeza: remove vazios, duplicados, garante no máx 5
-    $media = array_values(array_filter($media, function ($item) {
-        return $item !== null && $item !== '';
-    }));
-    $media = array_values(array_unique($media));
+  // Limpeza: remove vazios, duplicados, garante no máx 5
+  $media = array_values(array_filter($media, function ($item) {
+    return $item !== null && $item !== '';
+  }));
+  $media = array_values(array_unique($media));
 
-    if (count($media) > 5) {
-        $error = "Máximo de 5 mídias por projeto.";
-    }
+  if (count($media) > 5) {
+    $error = "Máximo de 5 mídias por projeto.";
+  }
 
-    // Agora NÃO exigimos mais mídia obrigatória: só campos de texto
-    if ($title === '' || $location === '' || $description === '' || $tags === '') {
-        $error = $error ?: "Preencha todos os campos obrigatórios.";
-    }
+  // Agora NÃO exigimos mais mídia obrigatória: só campos de texto
+  if ($title === '' || $location === '' || $description === '' || $tags === '') {
+    $error = $error ?: "Preencha todos os campos obrigatórios.";
+  }
 
-    if ($error === '') {
-        $mainMedia = $media[0] ?? '';     // pode ser vazio
-        $mediaJson = json_encode($media); // [] se sem mídias
+  if ($error === '') {
+    $mainMedia = $media[0] ?? '';     // pode ser vazio
+    $mediaJson = json_encode($media); // [] se sem mídias
 
-        $upd = $pdo->prepare("
+    $upd = $pdo->prepare("
             UPDATE projects
             SET title = ?, location = ?, image_url = ?, media_json = ?, description = ?, tags = ?
             WHERE id = ? AND user_id = ?
         ");
-        $upd->execute(array(
-            $title,
-            $location,
-            $mainMedia,
-            $mediaJson,
-            $description,
-            $tags,
-            $id,
-            currentUserId()
-        ));
+    $upd->execute(array(
+      $title,
+      $location,
+      $mainMedia,
+      $mediaJson,
+      $description,
+      $tags,
+      $id,
+      currentUserId()
+    ));
 
-        header("Location: project_view.php?id=" . $id . "&update_success=1");
-        exit;
-    }
+    header("Location: project_view.php?id=" . $id . "&update_success=1");
+    exit;
+  }
 }
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Editar Projeto - CodePitch</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
 
-<?php include 'header_partial.php'; ?>
+  <?php include 'header_partial.php'; ?>
 
-<main class="page-main">
-  <section class="projects-section">
-    <h2>Editar Projeto</h2>
+  <main class="page-main">
+    <section class="projects-section">
+      <h2>Editar Projeto</h2>
 
-    <?php if ($error): ?>
-      <p style="color:#f85149;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+      <?php if ($error): ?>
+        <p style="color:#f85149;"><?= htmlspecialchars($error) ?></p>
+      <?php endif; ?>
 
-    <form method="post" enctype="multipart/form-data">
-      <div class="input-group">
-        <input type="text" name="title" value="<?= htmlspecialchars($project['title']) ?>" placeholder=" " required>
-        <label>Título do Projeto</label>
-      </div>
-      <div class="input-group">
-        <input type="text" name="location" value="<?= htmlspecialchars($project['location']) ?>" placeholder=" " required>
-        <label>Localização</label>
-      </div>
-      <div class="input-group">
-        <input type="url" name="image_url" value="<?= htmlspecialchars($displayUrl) ?>" placeholder=" ">
-        <label>URL de Imagem principal (opcional se usar upload)</label>
-      </div>
-      <div class="upload-row">
-        <input type="file" id="mediaFile" name="media_files[]" accept="image/*" hidden multiple>
-        <button type="button" class="upload-btn" onclick="document.getElementById('mediaFile').click()">
-          📁 Enviar novas imagens (até 5 no total)
-        </button>
-        <span id="uploadFileName" class="upload-file-name"></span>
-      </div>
-      <div class="input-group">
-        <textarea name="description" placeholder=" " required><?= htmlspecialchars($project['description']) ?></textarea>
-        <label>Descrição do Projeto</label>
-      </div>
-      <div class="input-group">
-        <input type="text" name="tags" value="<?= htmlspecialchars($project['tags']) ?>" placeholder=" " required>
-        <label>Tags (separadas por vírgula)</label>
-      </div>
+      <form method="post" enctype="multipart/form-data">
+        <div class="input-group">
+          <input type="text" name="title" value="<?= htmlspecialchars($project['title']) ?>" placeholder=" " required>
+          <label>Título do Projeto</label>
+        </div>
+        <div class="input-group">
+          <input type="text" name="location" value="<?= htmlspecialchars($project['location']) ?>" placeholder=" " required>
+          <label>Localização</label>
+        </div>
+        <div class="input-group">
+          <input type="url" name="image_url" value="<?= htmlspecialchars($displayUrl) ?>" placeholder=" ">
+          <label>URL de Imagem principal (opcional se usar upload)</label>
+        </div>
+        <div class="upload-row">
+          <input type="file" id="mediaFile" name="media_files[]" accept="image/*" hidden multiple>
+          <button type="button" class="upload-btn" onclick="document.getElementById('mediaFile').click()">
+            📁 Enviar novas imagens (até 5 no total)
+          </button>
+          <span id="uploadFileName" class="upload-file-name"></span>
+        </div>
+        <div class="input-group">
+          <textarea name="description" placeholder=" " required><?= htmlspecialchars($project['description']) ?></textarea>
+          <label>Descrição do Projeto</label>
+        </div>
+        <div class="input-group">
+          <div class="tag-input" id="tagInputContainer">
+            <input type="text" id="tagInput" placeholder="Digite e pressione Enter" />
+          </div>
+          <!-- Campo real que será enviado para o PHP (tag1,tag2,tag3) -->
+          <input type="text" id="postTags" name="tags" placeholder=" " style="position:absolute;opacity:0;height:0;border:none;padding:0;margin:0;">
+          <label>Hashtags</label>
+        </div>
 
-      <?php if (!empty($existingMedia)): ?>
-        <p style="margin-bottom:0.5rem;">Mídias atuais (clique no X para marcar para remoção):</p>
-        <div class="project-media-grid">
-          <?php
-          $maxPreview = min(5, count($existingMedia));
-          for ($i = 0; $i < $maxPreview; $i++):
+        <?php if (!empty($existingMedia)): ?>
+          <p style="margin-bottom:0.5rem;">Mídias atuais (clique no X para marcar para remoção):</p>
+          <div class="project-media-grid">
+            <?php
+            $maxPreview = min(5, count($existingMedia));
+            for ($i = 0; $i < $maxPreview; $i++):
               $m = $existingMedia[$i];
               $ext = strtolower(pathinfo($m, PATHINFO_EXTENSION));
               $checkboxId = 'delete-media-' . $i;
-          ?>
-            <div class="project-media-item">
-              <img src="<?= htmlspecialchars($m) ?>" alt="Mídia atual"
-                   onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
+            ?>
+              <div class="project-media-item">
+                <img src="<?= htmlspecialchars($m) ?>" alt="Mídia atual"
+                  onerror="this.src='https://via.placeholder.com/150x90?text=Mídia'">
 
-              <input
-                type="checkbox"
-                class="delete-media-checkbox"
-                id="<?= $checkboxId ?>"
-                name="delete_media[]"
-                value="<?= $i ?>"
-              >
-              <label class="delete-media-label" for="<?= $checkboxId ?>" title="Marcar para remover esta mídia">
-                ✖
-              </label>
-            </div>
-          <?php endfor; ?>
-        </div>
-      <?php endif; ?>
+                <input
+                  type="checkbox"
+                  class="delete-media-checkbox"
+                  id="<?= $checkboxId ?>"
+                  name="delete_media[]"
+                  value="<?= $i ?>">
+                <label class="delete-media-label" for="<?= $checkboxId ?>" title="Marcar para remover esta mídia">
+                  ✖
+                </label>
+              </div>
+            <?php endfor; ?>
+          </div>
+        <?php endif; ?>
 
-      <button type="submit" class="btn" style="margin-top:1rem;">Salvar Alterações</button>
-    </form>
-  </section>
-</main>
+        <button type="submit" class="btn" style="margin-top:1rem;">Salvar Alterações</button>
+      </form>
+    </section>
+  </main>
 
-<script src="assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 </body>
+
 </html>

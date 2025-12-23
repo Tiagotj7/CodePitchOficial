@@ -1476,3 +1476,61 @@ header.scrolled {
 .profile-link-inline:hover {
   text-decoration: underline;
 }
+
+/* ================= INPUT DE HASHTAGS (CHIPS) ================= */
+.tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  cursor: text;
+}
+
+/* Campo de digitação das tags */
+.tag-input input#tagInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #c9d1d9;
+  font-size: 0.9rem;
+  padding: 0.3rem;
+  min-width: 80px;
+}
+
+/* Chip de hashtag */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background-color: #30363d;
+  color: #c9d1d9;
+  font-size: 0.8rem;
+}
+
+/* Botão de remover tag (X) */
+.tag-chip button.tag-remove {
+  background: none;
+  border: none;
+  color: #8b949e;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.tag-chip button.tag-remove:hover {
+  color: #f85149;
+}
+
+/* Ajuste no mobile: ocupa a linha inteira se precisar */
+@media (max-width: 430px) {
+  .tag-input {
+    padding: 0.3rem 0.4rem;
+  }
+}
