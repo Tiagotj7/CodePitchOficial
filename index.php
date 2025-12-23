@@ -228,66 +228,42 @@ $projects = $stmt->fetchAll();
   </div>
 
   <!-- Modal de Login/Cadastro -->
-  <div id="authModal" class="auth-modal">
-    <div class="auth-container">
-      <span class="auth-close" onclick="closeAuthModal()">&times;</span>
-      <div class="forms-container">
-        <div class="form-section login-section active" id="loginSection">
-          <div class="form-box">
-            <h2 class="form-title animation" style="--i:1">Entrar</h2>
-            <form id="login-form" method="post" action="login.php">
-              <div class="input-group animation" style="--i:4">
-                <input type="email" name="email" placeholder=" " required />
-                <label>Email</label>
-              </div>
-              <div class="input-group animation" style="--i:5">
-                <input type="password" name="password" placeholder=" " required />
-                <label>Senha</label>
-              </div>
-              <button type="submit" class="btn animation" style="--i:7">Entrar</button>
-            </form>
-          </div>
-          <div class="welcome-box">
-            <h2 class="animation" style="--i:1">Olá!</h2>
-            <p class="animation" style="--i:2">
-              Registre-se com seus dados pessoais para usar todos os recursos.
-            </p>
-            <button class="btn secondary animation" style="--i:3" onclick="showRegister()">
-              CADASTRAR
-            </button>
-          </div>
-        </div>
+  <div class="form-section login-section active" id="loginSection">
+    <div class="form-box">
+      <h2 class="form-title animation" style="--i:1">Entrar</h2>
 
-        <div class="form-section register-section" id="registerSection">
-          <div class="welcome-box">
-            <h2 class="animation" style="--i:1">Bem-vindo de Volta!</h2>
-            <p class="animation" style="--i:2">
-              Entre com seus dados pessoais para usar todos os recursos.
-            </p>
-            <button class="btn secondary animation" style="--i:3" onclick="showLogin()">
-              ENTRAR
-            </button>
-          </div>
-          <div class="form-box">
-            <h2 class="form-title animation" style="--i:1">Criar Conta</h2>
-            <form id="register-form" method="post" action="register.php">
-              <div class="input-group animation" style="--i:4">
-                <input type="text" name="name" placeholder=" " required />
-                <label>Nome</label>
-              </div>
-              <div class="input-group animation" style="--i:5">
-                <input type="email" name="email" placeholder=" " required />
-                <label>Email</label>
-              </div>
-              <div class="input-group animation" style="--i:6">
-                <input type="password" name="password" placeholder=" " required />
-                <label>Senha</label>
-              </div>
-              <button type="submit" class="btn animation" style="--i:7">CADASTRAR</button>
-            </form>
-          </div>
+      <!-- LOGIN NORMAL (email/senha) -->
+      <form id="login-form" method="post" action="login.php">
+        <div class="input-group animation" style="--i:4">
+          <input type="email" name="email" placeholder=" " required />
+          <label>Email</label>
         </div>
+        <div class="input-group animation" style="--i:5">
+          <input type="password" name="password" placeholder=" " required />
+          <label>Senha</label>
+        </div>
+        <button type="submit" class="btn animation" style="--i:7">Entrar</button>
+      </form>
+
+      <!-- LOGIN SOCIAL (GOOGLE) -->
+      <div class="social-login">
+        <p style="margin:0.75rem 0 0.5rem 0;font-size:0.85rem;color:#8b949e;">
+          ou continue com
+        </p>
+        <a href="google_login.php" class="google-btn">
+          <span>Login com Google</span>
+        </a>
       </div>
+    </div>
+
+    <div class="welcome-box">
+      <h2 class="animation" style="--i:1">Olá!</h2>
+      <p class="animation" style="--i:2">
+        Registre-se com seus dados pessoais para usar todos os recursos.
+      </p>
+      <button class="btn secondary animation" style="--i:3" onclick="showRegister()">
+        CADASTRAR
+      </button>
     </div>
   </div>
 
