@@ -144,8 +144,8 @@ if (!$user) {
             $user = $stmt->fetch();
 
         } catch (PDOException $e) {
-            error_log('ERRO INSERT USER FROM GOOGLE: ' . $e->getMessage());
-            die('Erro ao criar usuário com a conta Google.');
+        // TEMPORÁRIO: mostrar erro real do banco
+        die('ERRO PDO AO CRIAR USUÁRIO GOOGLE: ' . $e->getMessage());
         }
     }
 }
